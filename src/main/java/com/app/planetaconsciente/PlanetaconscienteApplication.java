@@ -1,14 +1,22 @@
-package com.planetaconsciente;
+package com.app.planetaconsciente;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-// ... otros imports ...
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.app.planetaconsciente.model.Usuario;
+import com.app.planetaconsciente.repository.UsuarioRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+
 
 @SpringBootApplication
 public class PlanetaconscienteApplication implements CommandLineRunner {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
