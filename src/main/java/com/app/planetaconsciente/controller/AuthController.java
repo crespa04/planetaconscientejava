@@ -15,4 +15,9 @@ public class AuthController {
     public String showDashboard() {
         return "dashboard";
     }
+
+    @GetMapping("/register")
+    public String showRegisterForm() {
+        return "register";
+    }
 }
