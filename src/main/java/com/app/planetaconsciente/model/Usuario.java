@@ -1,18 +1,21 @@
-package com.planetaconsciente.model;
+package com.app.planetaconsciente.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
-    private String email;
     
-    // Getters y Setters (genera estos con Alt+Insert en VS Code)
+    @Column(unique = true)
+    @NotBlank
+    private String username;
+    
+    @NotBlank
+    private String password;
+    
+    // Getters y setters
+    // Constructor
 }
