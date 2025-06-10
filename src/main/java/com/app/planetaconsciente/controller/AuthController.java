@@ -1,5 +1,7 @@
 package com.app.planetaconsciente.controller;
 
+import com.app.planetaconsciente.model.User;
+import com.app.planetaconsciente.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
