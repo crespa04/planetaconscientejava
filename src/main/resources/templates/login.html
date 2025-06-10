@@ -166,21 +166,21 @@
         <h1>Iniciar Sesión</h1>
         
         <div th:if="${param.error}" class="message error">
-            Usuario o contraseña incorrectos
+            Correo electrónico o contraseña incorrectos
         </div>
         
         <div th:if="${param.logout}" class="message info">
             Has cerrado sesión correctamente
         </div>
         
-        <div th:if="${param.registered}" class="message success">
+        <div th:if="${param.success}" class="message success">
             ¡Registro exitoso! Por favor inicia sesión
         </div>
         
         <form th:action="@{/login}" method="post">
             <div class="form-group">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" placeholder="Ingresa tu usuario" required>
+                <label for="username">Correo Electrónico</label>
+                <input type="email" id="username" name="username" placeholder="Ingresa tu correo electrónico" required>
             </div>
             
             <div class="form-group">
