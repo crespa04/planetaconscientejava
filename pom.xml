@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.planetaconscience</groupId>
-    <artifactId>PlanetaConsistente</artifactId>
+    <artifactId>PlanetaConsciente</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>PlanetaConsistente</name>
+    <name>PlanetaConsciente</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
