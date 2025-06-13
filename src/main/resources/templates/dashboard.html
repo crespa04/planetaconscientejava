@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8">
     <title>Dashboard</title>
 </head>
 <body>
-    <h1>Bienvenido <span th:text="${#authentication.name}">Usuario</span></h1>
+    <h1>Bienvenido <span sec:authentication="name">Usuario</span></h1>
+
     <form th:action="@{/logout}" method="post">
         <button type="submit">Cerrar sesión</button>
     </form>
