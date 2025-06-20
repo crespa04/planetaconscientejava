@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Planeta Consciente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Mensaje de bienvenida para usuarios autenticados -->
+    <div th:if="${isAuthenticated}" class="welcome-message-overlay">
+        <div class="welcome-message-card">
+            <!-- Decoración de hojas flotantes -->
+            <div class="welcome-decoration">
+                <span th:each="i : ${#numbers.sequence(1, 8)}" 
+                      th:style="'width: ' + ${10 + T(java.lang.Math).random() * 20} + 'px; ' +
+                               'height: ' + ${10 + T(java.lang.Math).random() * 20} + 'px; ' +
+                               'left: ' + ${T(java.lang.Math).random() * 100} + '%; ' +
+                               'bottom: -20px; ' +
+                               'animation-duration: ' + ${10 + T(java.lang.Math).random() * 10} + 's; ' +
+                               'animation-delay: ' + ${T(java.lang.Math).random() * 5} + 's; ' +
+                               'opacity: ' + ${0.3 + T(java.lang.Math).random() * 0.4} + ';'"></span>
+            </div>
+            
+            <!-- Contenido principal -->
+            <h2>
+                <span class="welcome-title-main">Bienvenido a Planeta Consciente,</span>
+                <span class="welcome-user-name" th:text="${userName}"></span>!
+            </h2>
+            
+            <p class="welcome-success-message">
+                <i class="fas fa-check-circle"></i>
+                ¡Has iniciado sesión correctamente!
+            </p>
+            
+            <!-- Botón de cierre -->
+            <button class="close-welcome" onclick="this.closest('.welcome-message-overlay').remove()">
+                &times;
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Cuidando Nuestro <span>Planeta</span> Juntos</h1>
+            <p class="hero-text">Únete a nuestra comunidad comprometida con la sostenibilidad y el medio ambiente.</p>
+            <div class="hero-buttons">
+                <a href="/eventos" class="hero-button primary">Participa en Eventos</a>
+                <a href="/calculadora" class="hero-button secondary">Calcula tu Huella</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="/images/amb4.jpg" alt="Planeta Tierra">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2>Nuestras Iniciativas</h2>
+            <p>Descubre cómo puedes contribuir a un futuro más sostenible</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Educación Ambiental</h3>
+                <p>Aprende sobre prácticas sostenibles y su impacto en nuestro ecosistema.</p>
+                <a href="/medio_ambiente" class="feature-link">Saber más <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Retos y Eventos</h3>
+                <p>Participa en nuestras actividades comunitarias para proteger el medio ambiente.</p>
+                <a href="/eventos" class="feature-link">Ver eventos <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>Calculadora Ecológica</h3>
+                <p>Mide tu impacto ambiental y descubre cómo reducirlo.</p>
+                <a href="/calculadora" class="feature-link">Calcular ahora <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" th:attr="data-count=${stats.peopleInvolved}">0</div>
+                <div class="stat-label">Personas involucradas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" th:attr="data-count=${stats.eventsHeld}">0</div>
+                <div class="stat-label">Eventos realizados</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" th:attr="data-count=${stats.communitiesImpacted}">0</div>
+                <div class="stat-label">Comunidades impactadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" th:attr="data-count=${stats.co2Reduced}">0</div>
+                <div class="stat-label">Toneladas de CO₂ reducidas</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section class="news-section">
+        <div class="section-header">
+            <h2>Últimas Noticias</h2>
+            <p>Mantente informado sobre temas ambientales</p>
+        </div>
+        
+        <div class="news-grid">
+            <div th:each="newsItem : ${news}" class="news-card">
+                <div class="news-image">
+                    <img th:src="${newsItem.image}" th:alt="${newsItem.title}">
+                    <div class="news-date" th:text="${newsItem.date}"></div>
+                </div>
+                <div class="news-content">
+                    <h3 th:text="${newsItem.title}"></h3>
+                    <p th:text="${newsItem.summary}"></p>
+                    <a th:href="@{/noticia/} + ${newsItem.id}" class="news-link">Leer más <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-footer">
+            <a href="/noticia" class="view-all">Ver todas las noticias <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="section-header">
+            <h2>Lo que dicen nuestros participantes</h2>
+            <p>Experiencias de personas que han cambiado sus hábitos</p>
+        </div>
+        
+        <div class="testimonials-slider">
+            <div th:each="testimonial : ${testimonials}" class="testimonial-card">
+                <div class="testimonial-content">
+                    <p th:text="${testimonial.quote}"></p>
+                </div>
+                <div class="testimonial-author">
+                    <img th:src="${testimonial.image}" th:alt="${testimonial.name}">
+                    <div class="author-info">
+                        <h4 th:text="${testimonial.name}"></h4>
+                        <p th:text="${testimonial.role}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>¿Listo para marcar la diferencia?</h2>
+            <p>Regístrate ahora y recibe nuestro plan de acción personalizado para reducir tu impacto ambiental.</p>
+            <a href="/register" class="cta-button">Empieza ahora <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <script>
+        // Counter animation for stats
+        document.addEventListener('DOMContentLoaded', function() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            const options = {
+                threshold: 0.5
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const statNumber = entry.target;
+                        const target = parseInt(statNumber.getAttribute('data-count'));
+                        const duration = 2000;
+                        const increment = target / (duration / 16);
+                        
+                        let current = 0;
+                        
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= target) {
+                                clearInterval(timer);
+                                current = target;
+                            }
+                            statNumber.textContent = Math.floor(current);
+                        }, 16);
+                        
+                        observer.unobserve(statNumber);
+                    }
+                });
+            }, options);
+            
+            statNumbers.forEach(statNumber => {
+                observer.observe(statNumber);
+            });
+        });
+
+        // Cerrar el mensaje de bienvenida
+        document.querySelector('.close-welcome')?.addEventListener('click', function() {
+            document.querySelector('.welcome-message-overlay').style.display = 'none';
+        });
+        
+        // Opcional: Cerrar al hacer clic fuera del card
+        document.querySelector('.welcome-message-overlay')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
