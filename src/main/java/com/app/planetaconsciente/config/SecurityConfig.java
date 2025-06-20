@@ -2,6 +2,7 @@ package com.app.planetaconsciente.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,7 +17,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register", "/css/**").permitAll()
+                // Rutas públicas
+                .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/retos/**").permitAll()
+                
+                // Permisos para eventos:
+                .requestMatchers(HttpMethod.GET, "/eventos/**").authenticated() // Cualquier usuario logueado puede VER
+                .requestMatchers("/eventos/**").hasRole("ADMIN") // Solo ADMIN puede CREAR/EDITAR/ELIMINAR
+                
+                // Dashboard accesible solo para autenticados
+                .requestMatchers("/dashboard").authenticated()
+                
+                // Todas las demás rutas requieren autenticación
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
