@@ -2,42 +2,69 @@ package com.app.planetaconsciente.controller;
 
 import com.app.planetaconsciente.model.User;
 import com.app.planetaconsciente.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    // Muestra formulario de login
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping("/login")
-    public String showLoginForm() {
-        return "login"; // login.html
+    public String showLoginForm(
+            @RequestParam(required = false) String error,
+            @RequestParam(required = false) String logout,
+            Model model) {
+        
+        if (error != null) {
+            model.addAttribute("error", "Email o contraseña incorrectos");
+        }
+        if (logout != null) {
+            model.addAttribute("success", "Has cerrado sesión correctamente");
+        }
+        return "auth/login";
     }
 
-    // Muestra dashboard (Spring Security maneja la autenticación)
-    @GetMapping("/dashboard")
-    public String showDashboard() {
-        return "dashboard"; // dashboard.html
-    }
-
-    // Muestra formulario de registro
     @GetMapping("/register")
-    public String showRegisterForm(Model model) {
+    public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
-        return "register"; // register.html
+        return "auth/register";
     }
 
-    // Procesa el registro de nuevos usuarios
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") User user) {
-        userService.registerNewUser(user);
-        return "redirect:/login?success"; // Redirige a login con mensaje de éxito
+    public String registerUser(
+            @Valid @ModelAttribute User user,
+            BindingResult result,
+            Model model,
+            @RequestParam(required = false) String passwordConfirmation) {
+        
+        // Validación básica
+        if (result.hasErrors()) {
+            return "auth/register";
+        }
+        
+        // Validar confirmación de contraseña
+        if (!user.getPassword().equals(passwordConfirmation)) {
+            model.addAttribute("error", "Las contraseñas no coinciden");
+            return "auth/register";
+        }
+        
+        try {
+            userService.registerNewUser(user);
+            return "redirect:/login?registered";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return "auth/register";
+        }
     }
 }
