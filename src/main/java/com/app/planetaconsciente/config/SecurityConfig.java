@@ -16,38 +16,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                // Permite acceso público a estos endpoints
-                .requestMatchers(
-                    "/", 
-                    "/home",
-                    "/login", 
-                    "/register", 
-                    "/css/**", 
-                    "/js/**", 
-                    "/images/**",
-                    "/eventos",
-                    "/calculadora",
-                    "/medio_ambiente",
-                    "/noticia/**"
-                ).permitAll()
-                // Todas las demás requieren autenticación
+                .requestMatchers("/", "/login", "/register", "/css/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                // Cambiado para redirigir a la página de inicio después del login
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/dashboard", true)
                 .permitAll()
             )
             .logout(logout -> logout
-                // Redirige a la página principal con parámetro de logout
-                .logoutSuccessUrl("/?logout")
+                .logoutSuccessUrl("/login?logout")
                 .permitAll()
-            )
-            // Opcional: para recordar sesión
-            .rememberMe(remember -> remember
-                .key("uniqueAndSecret")
-                .tokenValiditySeconds(86400) // 1 día
             );
 
         return http.build();
