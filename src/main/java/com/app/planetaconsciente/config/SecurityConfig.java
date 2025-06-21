@@ -18,11 +18,19 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 // Rutas públicas
-                .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/retos/**").permitAll()
+                .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
                 
-                // Permisos para eventos:
-                .requestMatchers(HttpMethod.GET, "/eventos/**").authenticated() // Cualquier usuario logueado puede VER
-                .requestMatchers("/eventos/**").hasRole("ADMIN") // Solo ADMIN puede CREAR/EDITAR/ELIMINAR
+                // Retos - Acceso público para lectura
+                .requestMatchers(HttpMethod.GET, "/eventos/retos").permitAll()
+                
+                // Retos - Operaciones de administración
+                .requestMatchers("/eventos/retos/**").hasRole("ADMIN")
+                
+                // Eventos - Acceso público para lectura
+                .requestMatchers(HttpMethod.GET, "/eventos", "/eventos/").permitAll()
+                
+                // Eventos - Operaciones de administración
+                .requestMatchers("/eventos/nuevo", "/eventos/editar/**", "/eventos/eliminar/**").hasRole("ADMIN")
                 
                 // Dashboard accesible solo para autenticados
                 .requestMatchers("/dashboard").authenticated()
