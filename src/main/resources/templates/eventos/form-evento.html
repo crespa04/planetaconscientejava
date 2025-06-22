@@ -1,0 +1,6 @@
+<!-- Botones condicionales para admin -->
+<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+    <a th:href="@{/eventos/nuevo}" class="btn-admin btn-create">
+        <i class="fas fa-plus"></i> Nuevo Evento
+    </a>
+</div>
