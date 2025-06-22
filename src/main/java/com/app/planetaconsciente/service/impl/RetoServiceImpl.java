@@ -1,6 +1,9 @@
 package com.app.planetaconsciente.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -23,13 +26,13 @@ public class RetoServiceImpl implements RetoService {
     }
 
     @Override
-    public Reto guardar(Reto reto) {
-        return retoRepository.save(reto);
+    public Reto buscarPorId(Long id) {
+        return retoRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Reto buscarPorId(Long id) {
-        return retoRepository.findById(id).orElse(null);
+    public void guardar(Reto reto) {
+        retoRepository.save(reto);
     }
 
     @Override
@@ -37,13 +40,10 @@ public class RetoServiceImpl implements RetoService {
         retoRepository.deleteById(id);
     }
 
-    public RetoRepository getRetoRepository() {
-        return retoRepository;
-    }
-
     @Override
-    public Object obtenerRetosAgrupadosPorMes() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'obtenerRetosAgrupadosPorMes'");
+    public Map<String, List<Reto>> obtenerRetosAgrupadosPorMes() {
+        List<Reto> retos = retoRepository.findAll();
+        return retos.stream()
+            .collect(Collectors.groupingBy(Reto::getMes, TreeMap::new, Collectors.toList()));
     }
 }

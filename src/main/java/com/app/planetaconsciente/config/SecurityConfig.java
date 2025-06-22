@@ -24,7 +24,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
                 
                 // Retos - Acceso público para lectura
-                .requestMatchers(HttpMethod.GET, "/eventos/retos").permitAll()
+                .requestMatchers(HttpMethod.GET, "/eventos/retos/**").permitAll()
+
                 
                 // Retos - Operaciones de administración
                 .requestMatchers("/eventos/retos/**").hasRole("ADMIN")

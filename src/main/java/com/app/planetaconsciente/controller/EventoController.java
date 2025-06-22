@@ -2,6 +2,7 @@ package com.app.planetaconsciente.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -36,7 +37,7 @@ public class EventoController {
         model.addAttribute("eventos", eventoService.listarTodos());
         model.addAttribute("retos", retoService.listarTodos());
         model.addAttribute("mesActual", mesActual);
-        return "eventos/lista-combinada"; // ← esta es la vista correcta
+        return "eventos/lista-combinada";
     }
 
     // --------------------- EVENTOS ---------------------
@@ -53,16 +54,16 @@ public class EventoController {
         eventoService.guardar(evento);
         return "redirect:/eventos";
     }
-    @GetMapping("/{id}")
-public String verEvento(@PathVariable Long id, Model model) {
-    Evento evento = eventoService.buscarPorId(id);
-    if (evento == null) {
-        return "redirect:/eventos";
-    }
-    model.addAttribute("evento", evento);
-    return "eventos/detalle-evento";
-}
 
+    @GetMapping("/{id}")
+    public String verEvento(@PathVariable Long id, Model model) {
+        Evento evento = eventoService.buscarPorId(id);
+        if (evento == null) {
+            return "redirect:/eventos";
+        }
+        model.addAttribute("evento", evento);
+        return "eventos/detalle-evento";
+    }
 
     @GetMapping("/editar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -83,7 +84,7 @@ public String verEvento(@PathVariable Long id, Model model) {
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioRetoNuevo(Model model) {
         model.addAttribute("reto", new Reto());
-        return "eventos/form-retos"; // Si tienes este archivo
+        return "eventos/form-retos";
     }
 
     @PostMapping("/retos/guardar")
@@ -97,7 +98,7 @@ public String verEvento(@PathVariable Long id, Model model) {
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioRetoEditar(@PathVariable Long id, Model model) {
         model.addAttribute("reto", retoService.buscarPorId(id));
-        return "eventos/form-retos"; // Si tienes este archivo
+        return "eventos/form-retos";
     }
 
     @PostMapping("/retos/eliminar/{id}")
@@ -106,12 +107,13 @@ public String verEvento(@PathVariable Long id, Model model) {
         retoService.eliminar(id);
         return "redirect:/eventos";
     }
+
     @GetMapping({"/retos/mensuales", "/retos-mensuales"})
-public String verRetosMensuales(Model model) {
-    var retosPorMes = retoService.obtenerRetosAgrupadosPorMes();
-    model.addAttribute("retosPorMes", retosPorMes);
-    return "eventos/retos-mensuales";
-}
+    public String verRetosMensuales(Model model) {
+        Map<String, java.util.List<Reto>> retosPorMes = retoService.obtenerRetosAgrupadosPorMes();
+        model.addAttribute("retosPorMes", retosPorMes);
+        return "eventos/retos-mensuales";
+    }
 
     @GetMapping("/retos/{id}")
     public String verReto(@PathVariable Long id, Model model) {
@@ -120,6 +122,6 @@ public String verRetosMensuales(Model model) {
             return "redirect:/eventos";
         }
         model.addAttribute("reto", reto);
-        return "eventos/detalle-reto"; // Vista para mostrar el detalle del reto
+        return "eventos/detalle-reto";
     }
 }

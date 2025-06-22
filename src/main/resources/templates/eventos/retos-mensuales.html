@@ -13,16 +13,39 @@
         No hay retos disponibles por el momento.
     </div>
 
-    <div th:each="entry : ${retosPorMes}">
-        <div class="mes-card">
-            <h3 class="mes-titulo" th:text="${entry.key}">Mes</h3>
-            <ul class="lista-retos">
-                <li th:each="reto : ${entry.value}">
-                    <span th:text="${reto.descripcion}">Descripción del reto</span>
-                    <span class="badge-dificultad"
-                          th:classappend="${reto.dificultad?.toLowerCase()}">Dificultad</span>
-                </li>
-            </ul>
+    <!-- Reto Abril -->
+    <div class="mes-card">
+        <h3 class="mes-titulo">Abril</h3>
+        <div class="reto-item">
+            <p class="reto-descripcion">Consumir solo productos locales y de temporada durante el mes, evitando alimentos importados o procesados.</p>
+            <span class="badge-dificultad alta">Alta</span>
+        </div>
+    </div>
+
+    <!-- Reto Enero -->
+    <div class="mes-card">
+        <h3 class="mes-titulo">Enero</h3>
+        <div class="reto-item">
+            <p class="reto-descripcion">Evitar el uso de plásticos de un solo uso durante todo el mes. Incluye llevar bolsas reutilizables, usar botellas de agua recargables y evitar productos empaquetados en plástico.</p>
+            <span class="badge-dificultad media">Media</span>
+        </div>
+    </div>
+
+    <!-- Reto Febrero -->
+    <div class="mes-card">
+        <h3 class="mes-titulo">Febrero</h3>
+        <div class="reto-item">
+            <p class="reto-descripcion">Utilizar transporte público, bicicleta o caminar en lugar del coche privado al menos 3 días a la semana.</p>
+            <span class="badge-dificultad facil">Fácil</span>
+        </div>
+    </div>
+
+    <!-- Reto Junio -->
+    <div class="mes-card">
+        <h3 class="mes-titulo">Junio</h3>
+        <div class="reto-item">
+            <p class="reto-descripcion">Generar menos de 1 kg de basura no reciclable durante todo el mes, aplicando técnicas de compostaje y reutilización.</p>
+            <span class="badge-dificultad alta">Alta</span>
         </div>
     </div>
 
@@ -30,3 +53,80 @@
 </div>
 </body>
 </html>
+<style>
+    .titulo-principal {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .mes-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .mes-titulo {
+        font-size: 1.8rem;
+        color: #2980b9;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 8px;
+    }
+
+    .reto-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background-color: white;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .reto-descripcion {
+        margin: 0;
+        flex-grow: 1;
+        padding-right: 20px;
+    }
+
+    .badge-dificultad {
+        padding: 6px 12px;
+        border-radius: 20px;
+        color: white;
+        font-weight: 500;
+        font-size: 0.9rem;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .badge-dificultad.facil {
+        background-color: #28a745; /* Verde */
+    }
+
+    .badge-dificultad.media {
+        background-color: #ffc107; /* Amarillo */
+        color: #212529;
+    }
+
+    .badge-dificultad.alta {
+        background-color: #dc3545; /* Rojo */
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
+
+    .btn-outline-secondary {
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
