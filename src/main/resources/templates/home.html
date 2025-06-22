@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Inicio - Planeta Consciente</title>
+    <style>
+        /* Estilos para el mensaje de bienvenida */
+        .welcome-message-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .welcome-message-card {
+            position: relative;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .welcome-decoration span {
+            position: absolute;
+            background-color: #4caf7d;
+            border-radius: 50% 0 50% 50%;
+            transform: rotate(-45deg);
+            animation: float-up 10s linear infinite;
+        }
+        
+        @keyframes float-up {
+            0% { transform: rotate(-45deg) translateY(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            100% { transform: rotate(-45deg) translateY(-100vh); opacity: 0; }
+        }
+        
+        .welcome-title-main {
+            display: block;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        
+        .welcome-user-name {
+            color: #4caf7d;
+            font-weight: bold;
+        }
+        
+        .welcome-success-message {
+            color: #4caf7d;
+            margin: 1rem 0;
+        }
+        
+        .close-welcome {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        /* Estilos para las secciones */
+        .hero-section {
+            display: flex;
+            align-items: center;
+            padding: 4rem 2rem;
+            background-color: #f9fbf7;
+        }
+        
+        .hero-content {
+            flex: 1;
+            padding-right: 2rem;
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            color: #333;
+        }
+        
+        .hero-title span {
+            color: #4caf7d;
+        }
+        
+        .hero-text {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 1.5rem 0;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .hero-button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .hero-button.primary {
+            background-color: #4caf7d;
+            color: white;
+        }
+        
+        .hero-button.secondary {
+            border: 2px solid #4caf7d;
+            color: #4caf7d;
+        }
+        
+        .hero-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .hero-image {
+            flex: 1;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin: 4rem 0 3rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2rem;
+            color: #333;
+        }
+        
+        .section-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: #4caf7d;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-link {
+            color: #4caf7d;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .feature-link i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .feature-link:hover i {
+            transform: translateX(5px);
+        }
+        
+        .stats-section {
+            background-color: #4caf7d;
+            color: white;
+            padding: 4rem 2rem;
+            margin: 4rem 0;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .news-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .news-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .news-date {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: #4caf7d;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .news-content {
+            padding: 1.5rem;
+        }
+        
+        .news-content h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .news-content p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .news-link {
+            color: #4caf7d;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .news-link i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .news-link:hover i {
+            transform: translateX(5px);
+        }
+        
+        .section-footer {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .view-all {
+            color: #4caf7d;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        
+        .view-all i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .view-all:hover i {
+            transform: translateX(5px);
+        }
+        
+        .testimonials-slider {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .testimonial-content::before {
+            content: '"';
+            font-size: 3rem;
+            color: #e8f5e9;
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            z-index: -1;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-author img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+        }
+        
+        .author-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+        
+        .author-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .cta-section {
+            background-color: #4caf7d;
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-top: 4rem;
+        }
+        
+        .cta-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-content p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            background-color: white;
+            color: #4caf7d;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .cta-button i {
+            margin-left: 0.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .cta-button:hover i {
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Mensaje de bienvenida para usuarios autenticados -->
+        <div th:if="${#authentication.principal != 'anonymousUser'}" class="welcome-message-overlay">
+            <div class="welcome-message-card">
+                <!-- Decoración de hojas flotantes -->
+                <div class="welcome-decoration">
+                    <span th:each="i : ${#numbers.sequence(1, 8)}" 
+                          th:style="'width: ' + ${10 + T(java.lang.Math).random() * 20} + 'px; ' +
+                                   'height: ' + ${10 + T(java.lang.Math).random() * 20} + 'px; ' +
+                                   'left: ' + ${T(java.lang.Math).random() * 100} + '%; ' +
+                                   'animation-duration: ' + ${10 + T(java.lang.Math).random() * 10} + 's; ' +
+                                   'animation-delay: ' + ${T(java.lang.Math).random() * 5} + 's; ' +
+                                   'opacity: ' + ${0.3 + T(java.lang.Math).random() * 0.4} + ';'"></span>
+                </div>
+                
+                <!-- Contenido principal -->
+                <h2>
+                    <span class="welcome-title-main">Bienvenido a Planeta Consciente,</span>
+                    <span class="welcome-user-name" th:text="${#authentication.principal.username}"></span>!
+                </h2>
+                
+                <p class="welcome-success-message">
+                    <i class="fas fa-check-circle"></i>
+                    ¡Has iniciado sesión correctamente!
+                </p>
+                
+                <!-- Botón de cierre -->
+                <button class="close-welcome" onclick="this.closest('.welcome-message-overlay').remove()">
+                    &times;
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Cuidando Nuestro <span>Planeta</span> Juntos</h1>
+                <p class="hero-text">Únete a nuestra comunidad comprometida con la sostenibilidad y el medio ambiente.</p>
+                <div class="hero-buttons">
+                    <a th:href="@{/eventos}" class="hero-button primary">Participa en Eventos</a>
+                    <a th:href="@{/calculadora}" class="hero-button secondary">Calcula tu Huella</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img th:src="@{/images/amb4.jpg}" alt="Planeta Tierra">
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="section-header">
+                <h2>Nuestras Iniciativas</h2>
+                <p>Descubre cómo puedes contribuir a un futuro más sostenible</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Educación Ambiental</h3>
+                    <p>Aprende sobre prácticas sostenibles y su impacto en nuestro ecosistema.</p>
+                    <a th:href="@{/medio_ambiente}" class="feature-link">Saber más <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Retos y Eventos</h3>
+                    <p>Participa en nuestras actividades comunitarias para proteger el medio ambiente.</p>
+                    <a th:href="@{/eventos}" class="feature-link">Ver eventos <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Calculadora Ecológica</h3>
+                    <p>Mide tu impacto ambiental y descubre cómo reducirlo.</p>
+                    <a th:href="@{/calculadora}" class="feature-link">Calcular ahora <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number" data-count="12500">0</div>
+                    <div class="stat-label">Personas involucradas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="320">0</div>
+                    <div class="stat-label">Eventos realizados</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="45">0</div>
+                    <div class="stat-label">Comunidades impactadas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="1200">0</div>
+                    <div class="stat-label">Toneladas de CO₂ reducidas</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section class="news-section">
+            <div class="section-header">
+                <h2>Últimas Noticias</h2>
+                <p>Mantente informado sobre temas ambientales</p>
+            </div>
+            
+            <div class="news-grid">
+                <div class="news-card">
+                    <div class="news-image">
+                        <img th:src="@{/images/amb5.jpg}" alt="Noticia 1">
+                        <div class="news-date">15 Mar 2025</div>
+                    </div>
+                    <div class="news-content">
+                        <h3>Nueva iniciativa de reforestación urbana</h3>
+                        <p>Lanzamos nuestro programa para plantar 10,000 árboles en áreas urbanas durante este año.</p>
+                        <a th:href="@{/noticia/1}" class="news-link">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="news-image">
+                        <img th:src="@{/images/amb3.jpg}" alt="Noticia 2">
+                        <div class="news-date">28 Feb 2025</div>
+                    </div>
+                    <div class="news-content">
+                        <h3>Talleres de reciclaje creativo</h3>
+                        <p>Aprende a transformar materiales reciclables en objetos útiles en nuestros talleres mensuales.</p>
+                        <a th:href="@{/noticia/2}" class="news-link">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="news-image">
+                        <img th:src="@{/images/amb2.jpg}" alt="Noticia 3">
+                        <div class="news-date">10 Feb 2025</div>
+                    </div>
+                    <div class="news-content">
+                        <h3>Resultados de nuestra campaña de limpieza</h3>
+                        <p>Gracias a la participación de 500 voluntarios, recolectamos 2 toneladas de residuos en playas.</p>
+                        <a th:href="@{/noticia/3}" class="news-link">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-footer">
+                <a th:href="@{/noticia}" class="view-all">Ver todas las noticias <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section">
+            <div class="section-header">
+                <h2>Lo que dicen nuestros participantes</h2>
+                <p>Experiencias de personas que han cambiado sus hábitos</p>
+            </div>
+            
+            <div class="testimonials-slider">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Gracias a los talleres de Planeta Consciente, mi familia ha reducido su basura semanal en un 60%. ¡Es increíble ver el impacto que podemos tener!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img th:src="@{/images/1.jpg}" alt="Usuario 1">
+                        <div class="author-info">
+                            <h4>María González</h4>
+                            <p>Participante desde 2024</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"La calculadora ecológica me abrió los ojos sobre mi consumo de agua. Ahora he implementado sistemas de recolección de lluvia en mi casa."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img th:src="@{/images/usu3.jpg}" alt="Usuario 2">
+                        <div class="author-info">
+                            <h4>Carlos Mendoza</h4>
+                            <p>Voluntario activo</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Los eventos de limpieza no solo ayudan al medio ambiente, sino que crean una comunidad increíble de personas con valores similares."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img th:src="@{/images/amb1.jpg}" alt="Usuario 3">
+                        <div class="author-info">
+                            <h4>Ana Rodríguez</h4>
+                            <p>Líder comunitaria</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>¿Listo para marcar la diferencia?</h2>
+                <p>Regístrate ahora y recibe nuestro plan de acción personalizado para reducir tu impacto ambiental.</p>
+                <a th:href="@{/register}" class="cta-button">Empieza ahora <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </section>
+
+        <script>
+            // Counter animation for stats
+            document.addEventListener('DOMContentLoaded', function() {
+                const statNumbers = document.querySelectorAll('.stat-number');
+                
+                const options = {
+                    threshold: 0.5
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const statNumber = entry.target;
+                            const target = parseInt(statNumber.getAttribute('data-count'));
+                            const duration = 2000;
+                            const increment = target / (duration / 16);
+                            
+                            let current = 0;
+                            
+                            const timer = setInterval(() => {
+                                current += increment;
+                                if (current >= target) {
+                                    clearInterval(timer);
+                                    current = target;
+                                }
+                                statNumber.textContent = Math.floor(current);
+                            }, 16);
+                            
+                            observer.unobserve(statNumber);
+                        }
+                    });
+                }, options);
+                
+                statNumbers.forEach(statNumber => {
+                    observer.observe(statNumber);
+                });
+            });
+
+            // Cerrar el mensaje de bienvenida
+            document.querySelector('.close-welcome')?.addEventListener('click', function() {
+                document.querySelector('.welcome-message-overlay').style.display = 'none';
+            });
+            
+            // Opcional: Cerrar al hacer clic fuera del card
+            document.querySelector('.welcome-message-overlay')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

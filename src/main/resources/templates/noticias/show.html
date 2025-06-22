@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${noticia.titulo} + ' - Planeta Consciente'"></title>
+    
+    <!-- Estilos específicos de la página -->
+    <link th:href="@{/css/noticia.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div layout:fragment="content" class="noticia-detalle-container">
+        <div class="noticia-detalle">
+            <div class="noticia-detalle-img-container">
+                <th:block th:if="${noticia.imagenUrl}">
+                    <img th:src="@{${noticia.imagenUrl}}" th:alt="${noticia.titulo}" class="noticia-detalle-img" loading="lazy">
+                </th:block>
+                <th:block th:unless="${noticia.imagenUrl}">
+                    <img src="https://source.unsplash.com/random/800x450/?nature,eco" alt="Imagen de noticia" class="noticia-detalle-img" loading="lazy">
+                </th:block>
+            </div>
+            
+            <div class="noticia-detalle-content">
+                <div class="noticia-detalle-meta">
+                    <span class="noticia-detalle-date">
+                        <i class="far fa-calendar-alt"></i> 
+                        <span th:text="${#temporals.format(noticia.fechaPublicacion, 'd MMMM, yyyy', new java.util.Locale('es', 'ES'))}"></span>
+                    </span>
+                    <th:block th:if="${noticia.fuente}">
+                        <span class="noticia-detalle-source" th:text="${noticia.fuente}"></span>
+                    </th:block>
+                </div>
+                
+                <h1 class="noticia-detalle-title" th:text="${noticia.titulo}"></h1>
+                
+                <div class="noticia-detalle-text" th:utext="${#strings.replace(#strings.escapeXml(noticia.contenido), '', '&lt;br /&gt;')}"></div>
+                
+                <div class="noticia-actions">
+                    <a th:href="@{/noticias}" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Volver a noticias
+                    </a>
+                    
+                    <div sec:authorize="isAuthenticated()" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="admin-actions">
+                        <a th:href="@{/noticias/{id}/editar(id=${noticia.id})}" class="btn btn-outline btn-edit">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        
+                        <form th:action="@{/noticias/{id}(id=${noticia.id})}" method="POST" class="d-inline">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta noticia?')">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

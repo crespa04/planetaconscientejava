@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title th:text="${noticia != null} ? 'Editar Noticia - ' + ${noticia.titulo} : 'Crear Nueva Noticia'">Noticia</title>
+    
+    <!-- Estilos específicos de la página -->
+    <link th:href="@{/css/noticia.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div layout:fragment="content" class="noticia-form-container">
+        <h1 th:text="${noticia != null} ? 'Editar Noticia' : 'Crear Nueva Noticia'"></h1>
+        
+        <!-- Mensajes de éxito -->
+        <div th:if="${successMessage != null}" class="alert alert-success" th:text="${successMessage}"></div>
+        
+        <!-- Errores de validación -->
+        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+            <ul>
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+        </div>
+        
+        <form th:action="${noticia != null} ? @{/noticias/{id}(id=${noticia.id}) : @{/noticias}" 
+              method="POST" enctype="multipart/form-data" class="noticia-form">
+            <input type="hidden" name="_method" th:if="${noticia != null}" value="PUT">
+            
+            <div class="form-group">
+                <label for="titulo">Título *</label>
+                <input type="text" id="titulo" name="titulo" 
+                       th:value="${noticia != null} ? ${noticia.titulo} : ${#fields.hasErrors('titulo')} ? ${param.titulo} : ''" 
+                       required>
+            </div>
+            
+            <div class="form-group">
+                <label for="resumen">Resumen *</label>
+                <textarea id="resumen" name="resumen" rows="3" required
+                          th:text="${noticia != null} ? ${noticia.resumen} : ${#fields.hasErrors('resumen')} ? ${param.resumen} : ''"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="contenido">Contenido *</label>
+                <textarea id="contenido" name="contenido" rows="10" required
+                          th:text="${noticia != null} ? ${noticia.contenido} : ${#fields.hasErrors('contenido')} ? ${param.contenido} : ''"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_publicacion">Fecha de Publicación *</label>
+                    <input type="date" id="fecha_publicacion" name="fechaPublicacion" 
+                           th:value="${noticia != null} ? ${#temporals.format(noticia.fechaPublicacion, 'yyyy-MM-dd')} : 
+                                 ${#fields.hasErrors('fechaPublicacion')} ? ${param.fechaPublicacion} : ${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" 
+                           required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fuente">Fuente (opcional)</label>
+                    <input type="text" id="fuente" name="fuente" 
+                           th:value="${noticia != null} ? ${noticia.fuente} : ${#fields.hasErrors('fuente')} ? ${param.fuente} : ''">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="imagen">Imagen destacada</label>
+                <div class="file-upload-container">
+                    <label for="imagen" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i> Seleccionar Imagen
+                    </label>
+                    <input type="file" id="imagen" name="imagen" class="file-upload-input" accept="image/*">
+                    <span class="file-upload-text">Formatos aceptados: JPG, PNG, GIF (Máx. 2MB)</span>
+                </div>
+                
+                <div th:if="${noticia != null and noticia.imagenUrl != null}" class="current-image">
+                    <p>Imagen actual:</p>
+                    <img th:src="@{${noticia.imagenUrl}}" alt="Imagen actual">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 
+                    <span th:text="${noticia != null} ? 'Actualizar Noticia' : 'Publicar Noticia'"></span>
+                </button>
+                
+                <a th:href="@{/noticias}" class="btn btn-outline">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Scripts específicos de la página -->
+    <th:block layout:fragment="scripts">
+        <script>
+        document.getElementById('imagen').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No se ha seleccionado ningún archivo';
+            document.querySelector('.file-upload-text').textContent = fileName;
+        });
+        </script>
+    </th:block>
+</body>
+</html>
