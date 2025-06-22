@@ -17,6 +17,8 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/css/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -25,6 +27,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
+                .logoutUrl("/logout") // ← esto se necesita
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             );

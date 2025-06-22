@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Collections;
+
 @Controller
 public class AuthController {
 
@@ -31,6 +33,7 @@ public class AuthController {
     // Procesa el registro de nuevos usuarios
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user) {
+        user.setRoles(Collections.singletonList("USER")); // ✅ asigna rol USER por defecto
         userService.registerNewUser(user);
         return "redirect:/login?success"; // Redirige a login con mensaje de éxito
     }
