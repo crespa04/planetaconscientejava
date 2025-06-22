@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Retos por Mes</title>
+</head>
+<body>
+<div layout:fragment="content" class="container py-4">
+    <h1 class="titulo-principal text-center mb-4">🌿 Retos Ambientales por Mes</h1>
+
+    <div th:if="${#maps.isEmpty(retosPorMes)}" class="alert alert-info">
+        No hay retos disponibles por el momento.
+    </div>
+
+    <div th:each="entry : ${retosPorMes}">
+        <div class="mes-card">
+            <h3 class="mes-titulo" th:text="${entry.key}">Mes</h3>
+            <ul class="lista-retos">
+                <li th:each="reto : ${entry.value}">
+                    <span th:text="${reto.descripcion}">Descripción del reto</span>
+                    <span class="badge-dificultad"
+                          th:classappend="${reto.dificultad?.toLowerCase()}">Dificultad</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <a th:href="@{/eventos}" class="btn btn-outline-secondary mt-4">← Volver</a>
+</div>
+</body>
+</html>

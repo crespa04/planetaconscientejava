@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Formulario Reto</title>
+</head>
+<body>
+<div layout:fragment="content" class="container mt-5">
+    <div class="seccion-independiente">
+        <h2 class="seccion-titulo">Formulario de Reto Ambiental</h2>
+
+        <form th:action="@{/eventos/retos/guardar}" th:object="${reto}" method="post">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre del reto:</label>
+                <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción:</label>
+                <textarea class="form-control" id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="mes" class="form-label">Mes asociado:</label>
+                <input type="text" class="form-control" id="mes" th:field="*{mes}">
+            </div>
+
+            <div class="mb-3">
+                <label for="dificultad" class="form-label">Dificultad:</label>
+                <select class="form-select" id="dificultad" th:field="*{dificultad}">
+                    <option value="Fácil">Fácil</option>
+                    <option value="Moderado">Moderado</option>
+                    <option value="Difícil">Difícil</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary me-2">Guardar</button>
+                <a th:href="@{/eventos}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

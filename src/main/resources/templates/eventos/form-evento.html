@@ -1,6 +1,88 @@
-<!-- Botones condicionales para admin -->
-<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-    <a th:href="@{/eventos/nuevo}" class="btn-admin btn-create">
-        <i class="fas fa-plus"></i> Nuevo Evento
-    </a>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/base :: layout">
+<head>
+    <title th:text="${evento.id} != null ? 'Editar Evento' : 'Crear Nuevo Evento'">Formulario Evento</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 th:text="${evento.id} != null ? 'Editar Evento' : 'Crear Nuevo Evento'"></h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{${evento.id != null} ? '/eventos/editar/' + ${evento.id} : '/eventos'}"
+                          method="post" th:object="${evento}" enctype="multipart/form-data">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+
+                        <div class="mb-3">
+                            <label class="form-label">Título *</label>
+                            <input type="text" class="form-control" th:field="*{titulo}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Descripción *</label>
+                            <textarea class="form-control" th:field="*{descripcion}" rows="4" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha y Hora *</label>
+                            <input type="datetime-local" class="form-control"
+                                   th:field="*{fecha}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ubicación *</label>
+                            <input type="text" class="form-control" th:field="*{ubicacion}" required>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Latitud</label>
+                                <input type="number" step="any" class="form-control" th:field="*{latitud}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Longitud</label>
+                                <input type="number" step="any" class="form-control" th:field="*{longitud}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Evento *</label>
+                            <select class="form-select" th:field="*{tipo}" required>
+                                <option value="">Seleccione un tipo</option>
+                                <option value="Taller">Taller</option>
+                                <option value="Conferencia">Conferencia</option>
+                                <option value="Siembra">Siembra de árboles</option>
+                                <option value="Limpieza">Limpieza comunitaria</option>
+                                <option value="Feria">Feria ambiental</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sitio Web</label>
+                            <input type="url" class="form-control" th:field="*{sitioWeb}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Imagen</label>
+                            <input type="file" class="form-control" name="imagen" accept="image/*">
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/eventos}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success">
+                                <span th:text="${evento.id != null ? 'Actualizar' : 'Guardar'}"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+</body>
+</html>

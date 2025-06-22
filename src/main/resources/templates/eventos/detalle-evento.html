@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<head>
+    <title th:text="${evento.titulo}">Detalle del Evento</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="container py-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-5">
+            <h2 class="card-title text-center mb-4" th:text="${evento.titulo}">Título del Evento</h2>
+
+            <div class="mb-3">
+                <i class="bi bi-calendar-event"></i>
+                <strong>Fecha:</strong>
+                <span th:text="${#temporals.format(evento.fechaHora, 'dd MMM yyyy HH:mm')}"></span>
+            </div>
+
+            <div class="mb-3">
+                <i class="bi bi-geo-alt-fill"></i>
+                <strong>Ubicación:</strong>
+                <span th:text="${evento.ubicacion}"></span>
+            </div>
+
+            <div class="mb-3">
+                <i class="bi bi-card-text"></i>
+                <strong>Descripción:</strong>
+                <p class="mt-2" th:text="${evento.descripcion}"></p>
+            </div>
+
+            <div class="text-center mt-4">
+                <a th:href="@{/eventos}" class="btn btn-outline-success rounded-pill">
+                    ← Volver a la lista
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,11 +1,12 @@
 package com.app.planetaconsciente.service.impl;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.app.planetaconsciente.model.Reto;
 import com.app.planetaconsciente.repository.RetoRepository;
 import com.app.planetaconsciente.service.RetoService;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class RetoServiceImpl implements RetoService {
@@ -38,5 +39,11 @@ public class RetoServiceImpl implements RetoService {
 
     public RetoRepository getRetoRepository() {
         return retoRepository;
+    }
+
+    @Override
+    public Object obtenerRetosAgrupadosPorMes() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerRetosAgrupadosPorMes'");
     }
 }

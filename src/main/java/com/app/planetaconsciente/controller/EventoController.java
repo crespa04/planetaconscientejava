@@ -1,15 +1,21 @@
 package com.app.planetaconsciente.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.app.planetaconsciente.model.Evento;
 import com.app.planetaconsciente.model.Reto;
 import com.app.planetaconsciente.service.EventoService;
 import com.app.planetaconsciente.service.RetoService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Controller
 @RequestMapping("/eventos")
@@ -23,19 +29,17 @@ public class EventoController {
         this.retoService = retoService;
     }
 
-    // Vista combinada
+    // Vista combinada: eventos + retos
     @GetMapping
     public String listarEventosYRetos(Model model) {
-        // Obtener el mes actual formateado
         String mesActual = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"));
-        
         model.addAttribute("eventos", eventoService.listarTodos());
         model.addAttribute("retos", retoService.listarTodos());
         model.addAttribute("mesActual", mesActual);
-        return "eventos/lista-combinada";
+        return "eventos/lista-combinada"; // ← esta es la vista correcta
     }
 
-    // Métodos para Eventos
+    // --------------------- EVENTOS ---------------------
     @GetMapping("/nuevo")
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioEventoNuevo(Model model) {
@@ -49,6 +53,16 @@ public class EventoController {
         eventoService.guardar(evento);
         return "redirect:/eventos";
     }
+    @GetMapping("/{id}")
+public String verEvento(@PathVariable Long id, Model model) {
+    Evento evento = eventoService.buscarPorId(id);
+    if (evento == null) {
+        return "redirect:/eventos";
+    }
+    model.addAttribute("evento", evento);
+    return "eventos/detalle-evento";
+}
+
 
     @GetMapping("/editar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -64,12 +78,12 @@ public class EventoController {
         return "redirect:/eventos";
     }
 
-    // Métodos para Retos
+    // --------------------- RETOS ---------------------
     @GetMapping("/retos/nuevo")
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioRetoNuevo(Model model) {
         model.addAttribute("reto", new Reto());
-        return "eventos/form-retos";
+        return "eventos/form-retos"; // Si tienes este archivo
     }
 
     @PostMapping("/retos/guardar")
@@ -83,7 +97,7 @@ public class EventoController {
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioRetoEditar(@PathVariable Long id, Model model) {
         model.addAttribute("reto", retoService.buscarPorId(id));
-        return "eventos/form-retos";
+        return "eventos/form-retos"; // Si tienes este archivo
     }
 
     @PostMapping("/retos/eliminar/{id}")
@@ -92,5 +106,20 @@ public class EventoController {
         retoService.eliminar(id);
         return "redirect:/eventos";
     }
-    
+    @GetMapping({"/retos/mensuales", "/retos-mensuales"})
+public String verRetosMensuales(Model model) {
+    var retosPorMes = retoService.obtenerRetosAgrupadosPorMes();
+    model.addAttribute("retosPorMes", retosPorMes);
+    return "eventos/retos-mensuales";
+}
+
+    @GetMapping("/retos/{id}")
+    public String verReto(@PathVariable Long id, Model model) {
+        Reto reto = retoService.buscarPorId(id);
+        if (reto == null) {
+            return "redirect:/eventos";
+        }
+        model.addAttribute("reto", reto);
+        return "eventos/detalle-reto"; // Vista para mostrar el detalle del reto
+    }
 }
