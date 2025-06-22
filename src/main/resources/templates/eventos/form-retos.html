@@ -4,49 +4,85 @@
       layout:decorate="~{layout/base}">
 <head>
     <title th:text="${reto.id} != null ? 'Editar Reto' : 'Nuevo Reto'">Formulario Reto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <div layout:fragment="content" class="container py-4">
     <h1 class="titulo-principal text-center mb-4" th:text="${reto.id} != null ? 'Editar Reto Ambiental' : 'Nuevo Reto Ambiental'">Formulario Reto</h1>
 
-    <form th:action="@{/eventos/retos/guardar}" method="post" class="form-retos">
-        <input type="hidden" th:if="${reto.id}" th:field="*{id}"/>
+    <form th:action="${reto.id} != null ? 
+                    @{/eventos/retos/editar/{id}(id=${reto.id})} : 
+                    @{/eventos/retos/guardar}" 
+          method="post" class="form-retos needs-validation" novalidate>
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 
         <div class="mb-4">
             <label for="descripcion" class="form-label">Descripción del Reto:</label>
-            <textarea id="descripcion" name="descripcion" class="form-control" 
-                     th:field="*{descripcion}" rows="3" required></textarea>
+            <textarea id="descripcion" th:field="*{descripcion}" class="form-control" rows="3" required></textarea>
+            <div class="invalid-feedback">Por favor ingresa una descripción para el reto</div>
         </div>
 
         <div class="row mb-4">
             <div class="col-md-6">
                 <label for="mes" class="form-label">Mes:</label>
-                <select id="mes" name="mes" class="form-select" th:field="*{mes}" required>
+                <select id="mes" th:field="*{mes}" class="form-select" required>
                     <option value="">Seleccionar mes...</option>
                     <option th:each="mes : ${T(com.tuapp.enums.MesEnum).values()}" 
                             th:value="${mes}" 
-                            th:text="${mes.displayName}"></option>
+                            th:text="${mes.displayName}"
+                            th:selected="${mes == reto.mes}"></option>
                 </select>
+                <div class="invalid-feedback">Por favor selecciona un mes</div>
             </div>
             <div class="col-md-6">
                 <label for="dificultad" class="form-label">Dificultad:</label>
-                <select id="dificultad" name="dificultad" class="form-select" th:field="*{dificultad}" required>
+                <select id="dificultad" th:field="*{dificultad}" class="form-select" required>
                     <option value="">Seleccionar dificultad...</option>
-                    <option value="FACIL">Fácil</option>
-                    <option value="MODERADO">Moderado</option>
-                    <option value="DIFICIL">Difícil</option>
+                    <option value="FACIL" th:selected="${reto.dificultad == 'FACIL'}">Fácil</option>
+                    <option value="MODERADO" th:selected="${reto.dificultad == 'MODERADO'}">Moderado</option>
+                    <option value="DIFICIL" th:selected="${reto.dificultad == 'DIFICIL'}">Difícil</option>
                 </select>
+                <div class="invalid-feedback">Por favor selecciona una dificultad</div>
             </div>
         </div>
 
         <div class="d-flex justify-content-between mt-4">
-            <a th:href="@{/eventos}" class="btn btn-outline-secondary px-4">← Cancelar</a>
+            <a th:href="@{/eventos/retos/mensuales}" class="btn btn-outline-secondary px-4">
+                <i class="fas fa-arrow-left"></i> Cancelar
+            </a>
             <button type="submit" class="btn btn-primary px-4">
+                <i class="fas fa-save"></i> 
                 <span th:text="${reto.id} != null ? 'Actualizar' : 'Guardar'"></span> Reto
             </button>
         </div>
     </form>
 </div>
+
+<th:block layout:fragment="scripts">
+    <!-- Validación del formulario -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation');
+        
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+    </script>
+</th:block>
 </body>
 </html>
 <style>
@@ -113,6 +149,11 @@
     .btn-primary:hover {
         background-color: #1a6ca1;
         border-color: #1a6ca1;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875em;
     }
 
     @media (max-width: 768px) {

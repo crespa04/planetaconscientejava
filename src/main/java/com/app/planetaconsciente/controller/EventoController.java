@@ -1,12 +1,14 @@
 package com.app.planetaconsciente.controller;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,33 +32,38 @@ public class EventoController {
         this.retoService = retoService;
     }
 
-    // Vista combinada: eventos + retos
+    // Vista principal combinada
     @GetMapping
     public String listarEventosYRetos(Model model) {
-        String mesActual = LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+        String mesActual = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"));
         model.addAttribute("eventos", eventoService.listarTodos());
         model.addAttribute("retos", retoService.listarTodos());
         model.addAttribute("mesActual", mesActual);
         return "eventos/lista-combinada";
     }
 
-    // --------------------- EVENTOS ---------------------
+    // --------------------- GESTIÓN DE EVENTOS ---------------------
     @GetMapping("/nuevo")
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioEventoNuevo(Model model) {
-        model.addAttribute("evento", new Evento());
+        Evento evento = new Evento();
+        evento.setFechaHora(LocalDateTime.now());
+        model.addAttribute("evento", evento);
         return "eventos/form-evento";
     }
 
-    @PostMapping
+    @PostMapping("/guardar")
     @PreAuthorize("hasRole('ADMIN')")
-    public String guardarEvento(@ModelAttribute Evento evento) {
+    public String guardarEvento(@ModelAttribute Evento evento, BindingResult result) {
+        if (result.hasErrors()) {
+            return "eventos/form-evento";
+        }
         eventoService.guardar(evento);
         return "redirect:/eventos";
     }
 
     @GetMapping("/{id}")
-    public String verEvento(@PathVariable Long id, Model model) {
+    public String verDetalleEvento(@PathVariable Long id, Model model) {
         Evento evento = eventoService.buscarPorId(id);
         if (evento == null) {
             return "redirect:/eventos";
@@ -67,8 +74,12 @@ public class EventoController {
 
     @GetMapping("/editar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String mostrarFormularioEventoEditar(@PathVariable Long id, Model model) {
-        model.addAttribute("evento", eventoService.buscarPorId(id));
+    public String mostrarFormularioEditarEvento(@PathVariable Long id, Model model) {
+        Evento evento = eventoService.buscarPorId(id);
+        if (evento == null) {
+            return "redirect:/eventos";
+        }
+        model.addAttribute("evento", evento);
         return "eventos/form-evento";
     }
 
@@ -79,7 +90,7 @@ public class EventoController {
         return "redirect:/eventos";
     }
 
-    // --------------------- RETOS ---------------------
+    // --------------------- GESTIÓN DE RETOS ---------------------
     @GetMapping("/retos/nuevo")
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioRetoNuevo(Model model) {
@@ -89,37 +100,55 @@ public class EventoController {
 
     @PostMapping("/retos/guardar")
     @PreAuthorize("hasRole('ADMIN')")
-    public String guardarReto(@ModelAttribute Reto reto) {
+    public String guardarReto(@ModelAttribute Reto reto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "eventos/form-retos";
+        }
         retoService.guardar(reto);
-        return "redirect:/eventos";
+        return "redirect:/eventos/retos/mensuales";
     }
 
     @GetMapping("/retos/editar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String mostrarFormularioRetoEditar(@PathVariable Long id, Model model) {
-        model.addAttribute("reto", retoService.buscarPorId(id));
+    public String mostrarFormularioEditarReto(@PathVariable Long id, Model model) {
+        Reto reto = retoService.buscarPorId(id);
+        if (reto == null) {
+            return "redirect:/eventos/retos/mensuales";
+        }
+        model.addAttribute("reto", reto);
         return "eventos/form-retos";
+    }
+
+    @PostMapping("/retos/editar/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String actualizarReto(@PathVariable Long id, @ModelAttribute Reto reto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "eventos/form-retos";
+        }
+        reto.setId(id);
+        retoService.guardar(reto);
+        return "redirect:/eventos/retos/mensuales";
     }
 
     @PostMapping("/retos/eliminar/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String eliminarReto(@PathVariable Long id) {
         retoService.eliminar(id);
-        return "redirect:/eventos";
+        return "redirect:/eventos/retos/mensuales";
     }
 
-    @GetMapping({"/retos/mensuales", "/retos-mensuales"})
+    @GetMapping("/retos/mensuales")
     public String verRetosMensuales(Model model) {
-        Map<String, java.util.List<Reto>> retosPorMes = retoService.obtenerRetosAgrupadosPorMes();
+        Map<String, List<Reto>> retosPorMes = retoService.obtenerRetosAgrupadosPorMes();
         model.addAttribute("retosPorMes", retosPorMes);
         return "eventos/retos-mensuales";
     }
 
     @GetMapping("/retos/{id}")
-    public String verReto(@PathVariable Long id, Model model) {
+    public String verDetalleReto(@PathVariable Long id, Model model) {
         Reto reto = retoService.buscarPorId(id);
         if (reto == null) {
-            return "redirect:/eventos";
+            return "redirect:/eventos/retos/mensuales";
         }
         model.addAttribute("reto", reto);
         return "eventos/detalle-reto";
