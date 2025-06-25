@@ -1,12 +1,6 @@
 package com.app.planetaconsciente.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -29,16 +23,22 @@ public class Noticia {
     private LocalDate fechaPublicacion;
 
     private String fuente;
-    
     private String imagenUrl;
-    
     private boolean destacada;
 
-    // Constructores, getters y setters
+    // Constructores
     public Noticia() {
     }
 
-    // Getters y Setters para todos los campos
+    public Noticia(String titulo, String resumen, String contenido, LocalDate fechaPublicacion, String fuente) {
+        this.titulo = titulo;
+        this.resumen = resumen;
+        this.contenido = contenido;
+        this.fechaPublicacion = fechaPublicacion;
+        this.fuente = fuente;
+    }
+
+    // Getters y Setters
     public Long getId() {
         return id;
     }

@@ -31,12 +31,7 @@ public class NoticiaServiceImpl implements NoticiaService {
 
     @Override
     public Page<Noticia> findByFiltros(String busqueda, String fuente, LocalDate fechaDesde, LocalDate fechaHasta, Pageable pageable) {
-        return noticiaRepository.findByFiltros(
-                busqueda, 
-                fuente, 
-                fechaDesde, 
-                fechaHasta, 
-                pageable);
+        return noticiaRepository.findByFiltros(busqueda, fuente, fechaDesde, fechaHasta, pageable);
     }
 
     @Override
@@ -51,6 +46,11 @@ public class NoticiaServiceImpl implements NoticiaService {
             String fileName = fileStorageService.storeFile(imagen);
             noticia.setImagenUrl("/uploads/" + fileName);
         }
+        
+        if (noticia.getFechaPublicacion() == null) {
+            noticia.setFechaPublicacion(LocalDate.now());
+        }
+        
         return noticiaRepository.save(noticia);
     }
 
@@ -63,6 +63,7 @@ public class NoticiaServiceImpl implements NoticiaService {
         noticiaExistente.setContenido(noticia.getContenido());
         noticiaExistente.setFechaPublicacion(noticia.getFechaPublicacion());
         noticiaExistente.setFuente(noticia.getFuente());
+        noticiaExistente.setDestacada(noticia.isDestacada());
         
         if (imagen != null && !imagen.isEmpty()) {
             String fileName = fileStorageService.storeFile(imagen);

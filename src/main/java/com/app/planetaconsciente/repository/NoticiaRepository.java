@@ -15,7 +15,8 @@ import java.util.List;
 public interface NoticiaRepository extends JpaRepository<Noticia, Long> {
 
     @Query("SELECT n FROM Noticia n WHERE " +
-           "(:busqueda IS NULL OR LOWER(n.titulo) LIKE LOWER(CONCAT('%', :busqueda, '%')) OR LOWER(n.resumen) LIKE LOWER(CONCAT('%', :busqueda, '%'))) AND " +
+           "(:busqueda IS NULL OR LOWER(n.titulo) LIKE LOWER(CONCAT('%', :busqueda, '%')) OR " +
+           "LOWER(n.resumen) LIKE LOWER(CONCAT('%', :busqueda, '%'))) AND " +
            "(:fuente IS NULL OR n.fuente = :fuente) AND " +
            "(:fechaDesde IS NULL OR n.fechaPublicacion >= :fechaDesde) AND " +
            "(:fechaHasta IS NULL OR n.fechaPublicacion <= :fechaHasta)")
@@ -25,6 +26,7 @@ public interface NoticiaRepository extends JpaRepository<Noticia, Long> {
             @Param("fechaDesde") LocalDate fechaDesde,
             @Param("fechaHasta") LocalDate fechaHasta,
             Pageable pageable);
-       @Query("SELECT DISTINCT n.fuente FROM Noticia n")
-       List<String> findDistinctFuentes();
+
+    @Query("SELECT DISTINCT n.fuente FROM Noticia n WHERE n.fuente IS NOT NULL")
+    List<String> findDistinctFuentes();
 }
