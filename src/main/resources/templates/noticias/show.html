@@ -39,6 +39,9 @@
                 <!-- Título -->
                 <h1 class="mb-4" th:text="${noticia.titulo}"></h1>
                 
+                <!-- Resumen -->
+                <div class="lead mb-4" th:utext="${#strings.replace(#strings.escapeXml(noticia.resumen), '&#10;', '&lt;br /&gt;')}"></div>
+                
                 <!-- Contenido -->
                 <div class="mb-4" th:utext="${#strings.replace(#strings.escapeXml(noticia.contenido), '&#10;', '&lt;br /&gt;')}"></div>
                 
