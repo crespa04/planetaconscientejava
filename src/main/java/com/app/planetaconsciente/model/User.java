@@ -11,9 +11,13 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false) // 🟢 nombre del usuario
+    private String nombre;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -23,6 +27,10 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
+
+    // 🟢 Relación con Foro
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Foro> publicaciones = new ArrayList<>();
 
     // Métodos de UserDetails
     @Override
@@ -42,6 +50,9 @@ public class User implements UserDetails {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
@@ -50,4 +61,7 @@ public class User implements UserDetails {
 
     public List<String> getRoles() { return roles; }
     public void setRoles(List<String> roles) { this.roles = roles; }
+
+    public List<Foro> getPublicaciones() { return publicaciones; }
+    public void setPublicaciones(List<Foro> publicaciones) { this.publicaciones = publicaciones; }
 }
