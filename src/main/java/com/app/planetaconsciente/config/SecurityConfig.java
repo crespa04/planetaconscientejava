@@ -22,11 +22,15 @@ public class SecurityConfig {
                 .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 // Rutas públicas
                 .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+
+                // Noticias - Acceso público para lectura
+                .requestMatchers(HttpMethod.GET, "/noticias", "/noticias/**").permitAll()
+                // Noticias - Operaciones de administración
+                .requestMatchers("/noticias/nueva", "/noticias/editar/**", "/noticias/eliminar/**").hasRole("ADMIN")    
                 
                 // Retos - Acceso público para lectura
                 .requestMatchers(HttpMethod.GET, "/eventos/retos/**").permitAll()
 
-                
                 // Retos - Operaciones de administración
                 .requestMatchers("/eventos/retos/**").hasRole("ADMIN")
                 

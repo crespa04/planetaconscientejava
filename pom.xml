@@ -26,7 +26,6 @@
     </properties>
 
     <dependencies>
-
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -101,6 +100,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Thymeleaf Layout Dialect -->
         <!-- Thymeleaf Layout Dialect -->
         <dependency>
             <groupId>nz.net.ultraq.thymeleaf</groupId>

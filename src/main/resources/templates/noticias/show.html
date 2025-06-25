@@ -1,56 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout/base}">
 <head>
-    <title th:text="${noticia.titulo} + ' - Planeta Consciente'"></title>
-    
-    <!-- Estilos específicos de la página -->
+    <title layout:title-pattern="$CONTENT_TITLE - $DECORATOR_TITLE" 
+           th:text="${noticia.titulo} + ' - Planeta Consciente'"></title>
     <link th:href="@{/css/noticia.css}" rel="stylesheet">
 </head>
 
 <body>
-    <div layout:fragment="content" class="noticia-detalle-container">
-        <div class="noticia-detalle">
-            <div class="noticia-detalle-img-container">
-                <th:block th:if="${noticia.imagenUrl}">
-                    <img th:src="@{${noticia.imagenUrl}}" th:alt="${noticia.titulo}" class="noticia-detalle-img" loading="lazy">
-                </th:block>
-                <th:block th:unless="${noticia.imagenUrl}">
-                    <img src="https://source.unsplash.com/random/800x450/?nature,eco" alt="Imagen de noticia" class="noticia-detalle-img" loading="lazy">
-                </th:block>
-            </div>
-            
-            <div class="noticia-detalle-content">
-                <div class="noticia-detalle-meta">
-                    <span class="noticia-detalle-date">
-                        <i class="far fa-calendar-alt"></i> 
-                        <span th:text="${#temporals.format(noticia.fechaPublicacion, 'd MMMM, yyyy', new java.util.Locale('es', 'ES'))}"></span>
-                    </span>
-                    <th:block th:if="${noticia.fuente}">
-                        <span class="noticia-detalle-source" th:text="${noticia.fuente}"></span>
-                    </th:block>
+    <div layout:fragment="content" class="container mt-4">
+        <div class="card">
+            <div class="card-body">
+                <!-- Imagen -->
+                <div class="text-center mb-4">
+                    <img th:if="${noticia.imagenUrl}" th:src="@{${noticia.imagenUrl}}" 
+                         th:alt="${noticia.titulo}" class="img-fluid rounded" style="max-height: 400px;">
+                    <img th:unless="${noticia.imagenUrl}" src="https://via.placeholder.com/800x450?text=Planeta+Consciente" 
+                         alt="Imagen de noticia" class="img-fluid rounded" style="max-height: 400px;">
                 </div>
                 
-                <h1 class="noticia-detalle-title" th:text="${noticia.titulo}"></h1>
+                <!-- Metadatos -->
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                    <span class="badge bg-success" th:if="${noticia.destacada}">
+                        <i class="fas fa-star"></i> Destacada
+                    </span>
+                    <span class="text-muted">
+                        <i class="far fa-calendar-alt"></i> 
+                        <span th:text="${#temporals.format(noticia.fechaPublicacion, 'd MMMM yyyy', new java.util.Locale('es', 'ES'))}"></span>
+                    </span>
+                    <span class="text-muted" th:if="${noticia.fuente}">
+                        <i class="fas fa-newspaper"></i> 
+                        <span th:text="${noticia.fuente}"></span>
+                    </span>
+                </div>
                 
-                <div class="noticia-detalle-text" th:utext="${#strings.replace(#strings.escapeXml(noticia.contenido), '', '&lt;br /&gt;')}"></div>
+                <!-- Título -->
+                <h1 class="mb-4" th:text="${noticia.titulo}"></h1>
                 
-                <div class="noticia-actions">
-                    <a th:href="@{/noticias}" class="btn btn-outline">
+                <!-- Contenido -->
+                <div class="mb-4" th:utext="${#strings.replace(#strings.escapeXml(noticia.contenido), '&#10;', '&lt;br /&gt;')}"></div>
+                
+                <!-- Acciones -->
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/noticias}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left"></i> Volver a noticias
                     </a>
                     
-                    <div sec:authorize="isAuthenticated()" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="admin-actions">
-                        <a th:href="@{/noticias/{id}/editar(id=${noticia.id})}" class="btn btn-outline btn-edit">
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/noticias/{id}/editar(id=${noticia.id})}" class="btn btn-outline-primary me-2">
                             <i class="fas fa-edit"></i> Editar
                         </a>
                         
-                        <form th:action="@{/noticias/{id}(id=${noticia.id})}" method="POST" class="d-inline">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta noticia?')">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmación para eliminar -->
+        <div class="modal fade" id="confirmDelete" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar esta noticia? Esta acción no se puede deshacer.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form th:action="@{/noticias/{id}/eliminar(id=${noticia.id})}" method="POST">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
                         </form>
                     </div>
                 </div>
