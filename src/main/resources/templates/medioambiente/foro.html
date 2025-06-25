@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Foro Ecológico | Comunidad Ambiental</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+/* Variables de diseño */
+:root {
+    --primary: #2E7D32;  /* Verde principal */
+    --primary-dark: #1B5E20; /* Verde oscuro */
+    --primary-light: #4CAF50;
+    --secondary: #E8F5E9;
+    --accent: #FFC107;
+    --text: #263238;
+    --text-light: #607D8B;
+    --white: #FFFFFF;
+    --gray-light: #F5F5F5;
+    --gray: #E0E0E0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text);
+    background-color: var(--gray-light);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Estructura principal */
+.forum-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero Section mejorada */
+.forum-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    padding: 4rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.forum-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.05)" d="M0,0 L100,0 L100,100 L0,100 Z" /></svg>');
+    opacity: 0.1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.hero-title i {
+    margin-right: 0.8rem;
+    color: var(--accent);
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    animation: fadeIn 1s ease-out 0.3s both;
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Tarjeta de nueva publicación mejorada */
+.create-post-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 3rem;
+    overflow: hidden;
+    transition: var(--transition);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.create-post-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    color: var(--white);
+    padding: 1.2rem 1.5rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.card-header i {
+    margin-right: 0.8rem;
+    font-size: 1.2rem;
+}
+
+/* Formulario mejorado */
+.form-group {
+    padding: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--gray);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+    background-color: var(--gray-light);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    background-color: var(--white);
+}
+
+textarea.form-control {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.content-warning {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Botones mejorados */
+.btn-post {
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    color: var(--white);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 1.5rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
+
+.btn-post:hover {
+    background: linear-gradient(to right, var(--primary-dark), var(--primary));
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.btn-post:active {
+    transform: translateY(0);
+}
+
+/* Lista de publicaciones mejorada */
+.posts-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.post-card {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.post-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--gray);
+    background-color: var(--gray-light);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-details strong {
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.user-details small {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+
+.post-actions {
+    position: relative;
+}
+
+.btn-action {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: var(--transition);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-action:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: var(--primary);
+}
+
+.actions-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-sm);
+    z-index: 10;
+    min-width: 160px;
+    overflow: hidden;
+    border: 1px solid var(--gray);
+}
+
+.actions-menu a, .actions-menu button {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.actions-menu a:hover, .actions-menu button:hover {
+    background: var(--secondary);
+    color: var(--primary-dark);
+}
+
+.actions-menu i {
+    width: 20px;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.actions-menu a:hover i, .actions-menu button:hover i {
+    color: var(--primary);
+}
+
+.post-content {
+    padding: 1.5rem;
+}
+
+.post-content h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--primary-dark);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.post-content p {
+    margin-bottom: 0;
+    line-height: 1.7;
+    color: var(--text);
+    font-size: 1.05rem;
+}
+
+/* Alerta de login mejorada */
+.login-alert {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    text-align: center;
+    margin-bottom: 3rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px dashed var(--primary-light);
+    animation: pulse 2s infinite;
+}
+
+.login-alert a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--secondary);
+}
+
+.login-alert a:hover {
+    color: var(--primary-dark);
+    background-color: rgba(46, 125, 50, 0.1);
+    text-decoration: underline;
+}
+
+.login-alert a i {
+    font-size: 1.1rem;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.2);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(46, 125, 50, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(46, 125, 50, 0);
+    }
+}
+
+/* Floating Action Button mejorado */
+.fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: var(--transition);
+    z-index: 1000;
+}
+
+.fab:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+}
+
+.fab i {
+    transition: var(--transition);
+}
+
+.fab:hover i {
+    transform: scale(1.1);
+}
+
+/* Modal de edición mejorado */
+.modal-edit {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.modal-edit.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 650px;
+    position: relative;
+    transform: translateY(20px);
+    transition: var(--transition);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.modal-edit.active .modal-content {
+    transform: translateY(0);
+}
+
+.close-modal {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: var(--transition);
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-modal:hover {
+    color: var(--primary);
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* Efectos de carga */
+.skeleton {
+    animation: skeleton-loading 1.5s linear infinite alternate;
+}
+
+.skeleton-text {
+    width: 100%;
+    height: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.skeleton-text:last-child {
+    width: 80%;
+    margin-bottom: 0;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: hsl(200, 20%, 80%);
+    }
+    100% {
+        background-color: hsl(200, 20%, 95%);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .post-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .post-actions {
+        align-self: flex-end;
+    }
+    
+    .user-info {
+        width: 100%;
+    }
+    
+    .fab {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .forum-hero {
+        padding: 3rem 0;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .form-group {
+        padding: 1rem;
+    }
+    
+    .btn-post {
+        width: 100%;
+        margin: 0 0 1rem 0;
+        justify-content: center;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="forum-container">
+        <!-- Hero Section mejorada -->
+        <div class="forum-hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <i class="fas fa-leaf"></i> FORO ECOLÓGICO
+                </h1>
+                <p class="hero-subtitle">
+                    Conecta, comparte y aprende con nuestra comunidad comprometida con el medio ambiente
+                </p>
+                <div class="hero-pattern"></div>
+            </div>
+        </div>
+
+        <div class="forum-main">
+            <!-- Tarjeta de nueva publicación para usuarios autenticados -->
+            <div th:if="${#authorization.expression('isAuthenticated()')}">
+                <div class="create-post-card">
+                    <div class="card-header">
+                        <i class="fas fa-pen-fancy"></i>
+                        <h3>CREA UNA NUEVA PUBLICACIÓN</h3>
+                    </div>
+                    <form th:action="@{/foro}" method="POST" th:object="${publicacion}">
+                        <div class="form-group">
+                            <label>TÍTULO DE TU PUBLICACIÓN</label>
+                            <input type="text" th:field="*{titulo}" class="form-control" placeholder="Ej: Mis consejos para reducir plástico" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>¿QUÉ QUIERES COMPARTIR CON LA COMUNIDAD?</label>
+                            <textarea th:field="*{contenido}" rows="5" class="form-control" 
+                                      placeholder="Comparte tus ideas, experiencias o preguntas sobre ecología y sostenibilidad..." required></textarea>
+                            <div class="content-warning">
+                                <i class="fas fa-heart"></i>
+                                <small>Este es un espacio de respeto y aprendizaje mutuo</small>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-post">
+                            <i class="fas fa-paper-plane"></i> PUBLICAR
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Mensaje para usuarios no autenticados -->
+            <div th:unless="${#authorization.expression('isAuthenticated()')}">
+                <div class="login-alert">
+                    <p><i class="fas fa-lock"></i> Para participar en el foro y compartir tus ideas ecológicas</p>
+                    <a th:href="@{/login}"><i class="fas fa-sign-in-alt"></i> Inicia sesión o regístrate</a>
+                </div>
+            </div>
+
+            <!-- Lista de publicaciones -->
+            <div class="posts-feed">
+                <!-- Publicación de ejemplo (puedes eliminar esto en producción) -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <div class="user-avatar" style="background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);">
+                                <span>E</span>
+                            </div>
+                            <div class="user-details">
+                                <strong>Ejemplo Usuario</strong>
+                                <small>Hoy a las 14:30</small>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="btn-action">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="actions-menu">
+                                <a href="#" class="edit-post">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <button type="button" class="btn-link">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="post-content">
+                        <h4>Esta es una publicación de ejemplo</h4>
+                        <p>¡Bienvenido al foro ecológico! Aquí puedes compartir tus ideas, proyectos y consejos sobre sostenibilidad, reciclaje, energías renovables y cualquier tema relacionado con el cuidado del medio ambiente. ¡Participa y ayúdanos a crear un mundo más verde!</p>
+                    </div>
+                </div>
+                
+                <!-- Publicaciones dinámicas -->
+                <div th:each="post : ${publicaciones}" class="post-card">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <div class="user-avatar" th:style="'background: linear-gradient(135deg, ' + (post.usuario != null ? '#2196F3' : '#9C27B0') + ' 0%, ' + (post.usuario != null ? '#0D47A1' : '#6A1B9A') + ' 100%)'">
+                                <span th:text="${post.usuario != null ? post.usuario.nombre.substring(0, 1) : 'A'}"></span>
+                            </div>
+                            <div class="user-details">
+                                <strong th:text="${post.usuario != null ? post.usuario.nombre : 'Anónimo'}"></strong>
+                                <small th:text="${#temporals.format(post.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></small>
+                            </div>
+                        </div>
+                        <div th:if="${#authorization.expression('isAuthenticated() and (post.usuario.id == principal.id or hasRole(''ADMIN''))')}">
+                            <div class="post-actions">
+                                <button class="btn-action">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="actions-menu">
+                                    <a th:href="@{'/foro/edit/' + ${post.id}}" class="edit-post">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <form th:action="@{'/foro/delete/' + ${post.id}}" method="POST">
+                                        <button type="submit" class="btn-link" 
+                                                onclick="return confirm('¿Estás seguro de eliminar esta publicación?')">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="post-content">
+                        <h4 th:text="${post.titulo}"></h4>
+                        <p th:text="${post.contenido}"></p>
+                    </div>
+                </div>
+                
+                <!-- Estado vacío -->
+                <div th:if="${publicaciones.isEmpty()}" class="empty-state" style="text-align: center; padding: 3rem; color: var(--text-light);">
+                    <i class="fas fa-comment-slash" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h3 style="font-weight: 400; margin-bottom: 0.5rem;">Aún no hay publicaciones</h3>
+                    <p>Sé el primero en compartir tus ideas ecológicas con la comunidad</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón flotante -->
+    <button class="fab" title="Nueva publicación" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-feather-alt"></i>
+    </button>
+
+    <script>
+        // Scripts mejorados para manejar interacciones
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menú de acciones con mejor manejo de eventos
+            document.querySelectorAll('.btn-action').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const menu = this.nextElementSibling;
+                    const allMenus = document.querySelectorAll('.actions-menu');
+                    
+                    allMenus.forEach(m => {
+                        if (m !== menu && m.style.display === 'block') {
+                            m.style.display = 'none';
+                        }
+                    });
+                    
+                    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+            
+            // Cerrar menús al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.post-actions')) {
+                    document.querySelectorAll('.actions-menu').forEach(menu => {
+                        menu.style.display = 'none';
+                    });
+                }
+            });
+            
+            // Efecto de carga para las publicaciones (simulado)
+            const postsFeed = document.querySelector('.posts-feed');
+            if (postsFeed) {
+                setTimeout(() => {
+                    postsFeed.querySelectorAll('.skeleton').forEach(el => {
+                        el.classList.remove('skeleton');
+                    });
+                }, 1500);
+            }
+            
+            // Animación suave al desplazarse
+            const links = document.querySelectorAll('a[href^="#"]');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+        
+        // Función para mostrar modal de edición
+        function showEditModal() {
+            const modal = document.querySelector('.modal-edit');
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Función para ocultar modal de edición
+        function hideEditModal() {
+            const modal = document.querySelector('.modal-edit');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+    </script>
+</body>
+</html>
