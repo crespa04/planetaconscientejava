@@ -11,73 +11,118 @@
 </head>
 
 <body>
-    <div layout:fragment="content" class="container mt-4">
-        <div class="card">
-            <div class="card-header">
-                <h2 th:text="${noticia.id != null} ? 'Editar Noticia' : 'Crear Nueva Noticia'"></h2>
+    <div layout:fragment="content" class="noticia-form-container">
+        <h1 th:text="${noticia.id != null} ? 'Editar Noticia' : 'Crear Nueva Noticia'"></h1>
+        
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        
+        <!-- Cambio importante: Usar th:object en el formulario -->
+        <form th:action="${noticia.id != null} ? @{/noticias/{id}(id=${noticia.id})} : @{/noticias}" 
+              method="post" enctype="multipart/form-data" class="noticia-form" th:object="${noticia}">
+              
+            <input type="hidden" name="_method" th:if="${noticia.id != null}" value="PUT">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            
+            <!-- Campos del formulario -->
+            <div class="form-group" th:classappend="${#fields.hasErrors('titulo')} ? 'has-error'">
+                <label for="titulo">Título *</label>
+                <input type="text" id="titulo" name="titulo" th:field="*{titulo}" required>
+                <span th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}" class="error-message"></span>
             </div>
             
-            <div class="card-body">
-                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-                
-                <form th:action="${noticia.id != null} ? @{/noticias/{id}(id=${noticia.id})} : @{/noticias}" 
-                      method="post" enctype="multipart/form-data">
-                      
-                    <input type="hidden" name="_method" th:if="${noticia.id != null}" value="PUT">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    
-                    <!-- Campos del formulario -->
-                    <div class="mb-3">
-                        <label for="titulo" class="form-label">Título *</label>
-                        <input type="text" class="form-control" id="titulo" name="titulo" 
-                               th:value="${noticia.titulo}" required>
-                    </div>
-                    
-                    <!-- Resto del formulario igual... -->
-                    
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <button type="submit" class="btn btn-primary me-2">
-                                <i class="fas fa-save"></i> 
-                                <span th:text="${noticia.id != null} ? 'Actualizar' : 'Guardar'"></span>
-                            </button>
-                            <a th:href="@{/noticias}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Cancelar
-                            </a>
-                        </div>
-                        
-                        <div sec:authorize="hasRole('ADMIN')" th:if="${noticia.id != null}">
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </button>
-                        </div>
-                    </div>
-                </form>
+            <div class="form-group" th:classappend="${#fields.hasErrors('resumen')} ? 'has-error'">
+                <label for="resumen">Resumen *</label>
+                <textarea id="resumen" name="resumen" rows="3" th:field="*{resumen}" required></textarea>
+                <span th:if="${#fields.hasErrors('resumen')}" th:errors="*{resumen}" class="error-message"></span>
             </div>
-        </div>
+            
+            <div class="form-group" th:classappend="${#fields.hasErrors('contenido')} ? 'has-error'">
+                <label for="contenido">Contenido *</label>
+                <textarea id="contenido" name="contenido" rows="10" th:field="*{contenido}" required></textarea>
+                <span th:if="${#fields.hasErrors('contenido')}" th:errors="*{contenido}" class="error-message"></span>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group" th:classappend="${#fields.hasErrors('fechaPublicacion')} ? 'has-error'">
+                    <label for="fechaPublicacion">Fecha de Publicación *</label>
+                    <input type="date" id="fechaPublicacion" name="fechaPublicacion" 
+                           th:value="${noticia.fechaPublicacion != null} ? ${#temporals.format(noticia.fechaPublicacion, 'yyyy-MM-dd')} : ${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" 
+                           required>
+                    <span th:if="${#fields.hasErrors('fechaPublicacion')}" th:errors="*{fechaPublicacion}" class="error-message"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fuente">Fuente (opcional)</label>
+                    <input type="text" id="fuente" name="fuente" th:field="*{fuente}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="imagen">Imagen destacada</label>
+                <div class="file-upload-container">
+                    <label for="imagen" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i> Seleccionar Imagen
+                    </label>
+                    <input type="file" id="imagen" name="imagen" class="file-upload-input" accept="image/*">
+                    <span class="file-upload-text">Formatos aceptados: JPG, PNG, GIF (Máx. 2MB)</span>
+                </div>
+                
+                <!-- Cambio clave: Modificar la condición para verificar imagenUrl -->
+                <div th:if="${noticia.id != null and noticia.imagenUrl != null and not noticia.imagenUrl.isEmpty()}" class="current-image">
+                    <p>Imagen actual:</p>
+                    <img th:src="@{${noticia.imagenUrl}}" alt="Imagen actual">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="destacada" class="checkbox-label">
+                    <input type="checkbox" id="destacada" name="destacada" th:checked="${noticia.destacada}">
+                    Marcar como noticia destacada
+                </label>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 
+                    <span th:text="${noticia.id != null} ? 'Actualizar Noticia' : 'Publicar Noticia'"></span>
+                </button>
+                
+                <a th:href="@{/noticias}" class="btn btn-outline">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
 
-        <!-- Modal de confirmación para eliminar -->
-        <div th:if="${noticia.id != null}" class="modal fade" id="confirmDelete" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Confirmar eliminación</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        ¿Estás seguro de que deseas eliminar esta noticia? Esta acción no se puede deshacer.
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <form th:action="@{/noticias/{id}/eliminar(id=${noticia.id})}" method="POST">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                            <button type="submit" class="btn btn-danger">Eliminar</button>
-                        </form>
-                    </div>
+    <!-- Modal de confirmación para eliminar -->
+    <div th:if="${noticia.id != null}" class="modal fade" id="confirmDelete" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar esta noticia? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form th:action="@{/noticias/{id}/eliminar(id=${noticia.id})}" method="POST">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script>
+            document.getElementById('imagen').addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : 'No se ha seleccionado ningún archivo';
+                document.querySelector('.file-upload-text').textContent = fileName;
+            });
+        </script>
     </div>
 </body>
 </html>
