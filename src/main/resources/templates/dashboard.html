@@ -98,44 +98,12 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <!-- Navigation Bar -->
-        <nav class="eco-nav">
-            <div class="container">
-                <div class="d-flex justify-content-center">
-                    <ul class="nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/"><i class="fas fa-home me-1"></i> Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/calculadora"><i class="fas fa-calculator me-1"></i> Calculadora</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/medio-ambiente"><i class="fas fa-leaf me-1"></i> Medio Ambiente</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/eventos"><i class="fas fa-calendar-alt me-1"></i> Eventos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/noticias"><i class="fas fa-newspaper me-1"></i> Noticias</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        
 
         <!-- Hero Section -->
         <div class="eco-hero text-center">
             <div class="container">
                 <h1 class="display-4 fw-bold mb-3">Cuidando Nuestro Planeta Juntos</h1>
-                <p class="lead mb-4">Únete a nuestra comunidad comprometida con la sostenibilidad y el medio ambiente</p>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="#" class="btn btn-light btn-lg rounded-pill px-4">
-                        <i class="fas fa-calendar-alt me-2"></i>Participa en Eventos
-                    </a>
-                    <a href="/calculadora" class="btn btn-outline-light btn-lg rounded-pill px-4">
-                        <i class="fas fa-calculator me-2"></i>Calcula tu Huella
-                    </a>
-                </div>
             </div>
         </div>
 
@@ -143,7 +111,7 @@
             <!-- Welcome Section -->
             <div class="row mb-5 align-items-center">
                 <div class="col-md-8">
-                    <h2 class="fw-bold">Bienvenido, <span sec:authentication="name" class="text-success">Usuario</span></h2>
+                    <h2 class="fw-bold">¡Bienvenido! <span sec:authentication="name" class="text-success">Usuario</span></h2>
                     <p class="lead text-muted">Tu contribución hace la diferencia. Revisa tus estadísticas y sigue mejorando.</p>
                 </div>
                 <div class="col-md-4 text-md-end">

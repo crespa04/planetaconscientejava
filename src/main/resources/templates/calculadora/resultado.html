@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
     <meta charset="UTF-8">
@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --eco-green: #2e7d32;
-            --eco-light-green: #81c784;
-            --eco-dark-green: #1b5e20;
+            --eco-green: #0e6112;
+            --eco-light-green: #15571b;
+            --eco-dark-green: #105014;
             --eco-warning: #ff8f00;
             --eco-danger: #c62828;
             --eco-blue: #0277bd;
@@ -196,13 +196,73 @@
             gap: 0.8rem;
             width: 100%;
             margin-top: 1.5rem;
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 4px 15px rgba(14, 97, 18, 0.3);
+            text-decoration: none;
+            text-align: center;
         }
         
         .restart-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+            box-shadow: 0 6px 20px rgba(16, 80, 20, 0.4);
             background: linear-gradient(135deg, var(--eco-dark-green), var(--eco-green));
+        }
+        
+        .dashboard-btn {
+            background: linear-gradient(135deg, var(--eco-blue), #025a8b);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            width: 100%;
+            margin-top: 1rem;
+            box-shadow: 0 4px 12px rgba(2, 119, 189, 0.25);
+            text-decoration: none;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .dashboard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(2, 119, 189, 0.35);
+            background: linear-gradient(135deg, #025a8b, var(--eco-blue));
+        }
+        
+        .dashboard-btn:hover::before {
+            left: 100%;
+        }
+        
+        .dashboard-btn i {
+            transition: transform 0.3s ease;
+        }
+        
+        .dashboard-btn:hover i {
+            transform: scale(1.1);
+        }
+        
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
         
         @keyframes fadeIn {
@@ -241,7 +301,8 @@
         }
     </style>
 </head>
-<body>
+
+<div layout:fragment="content">
     <div class="result-container">
         <div class="card result-card fade-in">
             <div class="result-header">
@@ -250,13 +311,11 @@
                 </h2>
             </div>
             <div class="result-body">
-                <!-- Valor de huella de carbono -->
                 <div class="carbon-value">
                     <span th:text="${#numbers.formatDecimal(huella, 1, 2, 'POINT')}"></span>
                     <span>kg CO₂</span>
                 </div>
-                
-                <!-- Clasificación -->
+
                 <div th:classappend="${clasificacion.startsWith('Baja')} ? 'classification-badge low-impact-badge' : 
                                   (${clasificacion.startsWith('Media')} ? 'classification-badge medium-impact-badge' : 
                                   'classification-badge high-impact-badge')">
@@ -264,8 +323,7 @@
                                     (${clasificacion.startsWith('Media')} ? 'fas fa-meh' : 'fas fa-frown')"></i>
                     <span th:text="${'Clasificación: ' + clasificacion}"></span>
                 </div>
-                
-                <!-- Mensaje de impacto -->
+
                 <div th:classappend="${clasificacion.startsWith('Baja')} ? 'impact-message low-impact-message' : 
                                   (${clasificacion.startsWith('Media')} ? 'impact-message medium-impact-message' : 
                                   'impact-message high-impact-message')">
@@ -279,8 +337,7 @@
                         <i class="fas fa-exclamation-triangle"></i> Tu huella de carbono es significativa. Considera implementar cambios en tus hábitos diarios.
                     </p>
                 </div>
-                
-                <!-- Recomendaciones -->
+
                 <div class="recommendations">
                     <h5><i class="fas fa-lightbulb"></i> Recomendaciones para reducir tu huella</h5>
                     <ul>
@@ -291,14 +348,16 @@
                         <li><strong>Consumo responsable:</strong> Elige productos locales y de temporada</li>
                     </ul>
                 </div>
-                
-                <a href="/calculadora" class="restart-btn">
-                    <i class="fas fa-calculator"></i> Realizar otro cálculo
-                </a>
+
+                <div class="button-container">
+                    <a href="/calculadora" class="restart-btn">
+                        <i class="fas fa-calculator"></i> Realizar otro cálculo
+                    </a>
+                    <a href="/dashboard" class="dashboard-btn">
+                        <i class="fas fa-chart-line"></i> Ver Dashboard
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</div>
