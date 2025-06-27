@@ -11,11 +11,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-green: #2e7d32;
-            --light-green: #81c784;
+            --primary-green: #15631b;
+            --light-green: #2d5e4a;
             --dark-green: #1b5e20;
-            --eco-blue: #0288d1;
-            --text-dark: #263238;
+            --eco-blue: #c1d7e2;
+            --border-color: #2d83127e;
+            --text-dark: rgb(252, 252, 252);
             --text-light: #607d8b;
             --white: #ffffff;
         }
@@ -315,78 +316,38 @@
         }
     </style>
 </head>
-<body>
-    <!-- Barra de navegación -->
-    <nav class="eco-nav">
-        <div class="nav-container">
-            <a th:href="@{/dashboard}" class="nav-brand">
-                <i class="fas fa-leaf"></i> EcoDashboard
-            </a>
-            
-            <div class="nav-links">
-                <a th:href="@{/dashboard}" class="nav-link">
-                    <i class="fas fa-home me-1"></i> Inicio
-                </a>
-                <a href="/calculadora" class="nav-link active">
-                    <i class="fas fa-calculator me-1"></i> Calculadora
-                </a>
-                <a href="/medio-ambiente" class="nav-link">
-                    <i class="fas fa-leaf me-1"></i> Medio Ambiente
-                </a>
-                <a href="/eventos" class="nav-link">
-                    <i class="fas fa-calendar-alt me-1"></i> Eventos
-                </a>
-                <a href="/noticias" class="nav-link">
-                    <i class="fas fa-newspaper me-1"></i> Noticias
-                </a>
-            </div>
-            
-            <div class="user-section">
-                <span class="user-name" sec:authentication="name">Usuario</span>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </nav>
 
+<div layout:fragment="content">
+    
     <!-- Contenido de la calculadora -->
     <div class="calculator-container">
         <div class="calculator-card">
             <div class="calculator-header">
-                <h2 class="calculator-title">
-                    <i class="fas fa-leaf"></i> Calculadora de Huella de Carbono
-                </h2>
+                <h2 class="calculator-title"><i class="fas fa-leaf"></i> Calculadora de Huella de Carbono</h2>
             </div>
             <div class="calculator-body">
                 <!-- Barra de progreso -->
                 <div class="progress-container">
                     <div class="progress-tracker">
-                        <div th:each="i : ${#numbers.sequence(1, preguntas.size())}" 
-                             class="progress-step" 
+                        <div th:each="i : ${#numbers.sequence(1, preguntas.size())}"
+                             class="progress-step"
                              th:classappend="${i <= preguntaActual + 1} ? 'active' : ''"></div>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-bar-fill" 
+                        <div class="progress-bar-fill"
                              th:style="'width:' + ${(preguntaActual + 1) * 100 / preguntas.size()} + '%'"></div>
                     </div>
-                    <p class="text-center text-muted mb-0" 
+                    <p class="text-center text-muted mb-0"
                        th:text="${'Pregunta ' + (preguntaActual + 1) + ' de ' + preguntas.size()}"></p>
                 </div>
 
-                <!-- Contenedor de pregunta -->
+                <!-- Pregunta -->
                 <div class="question-container">
                     <form th:action="@{/calculadora/responder}" method="post">
                         <input type="hidden" name="preguntaActual" th:value="${preguntaActual}">
-                        
-                        <div class="question-number">
-                            Pregunta <span th:text="${preguntaActual + 1}"></span>
-                        </div>
-                        
+                        <div class="question-number">Pregunta <span th:text="${preguntaActual + 1}"></span></div>
                         <h4 class="question-text" th:text="${preguntas[preguntaActual].texto}"></h4>
-                        
+
                         <!-- Pregunta numérica -->
                         <div th:if="${preguntas[preguntaActual].tipo == 'numero'}" class="mb-4">
                             <div class="input-group">
@@ -394,24 +355,24 @@
                                        th:min="${preguntas[preguntaActual].min ?: 0}"
                                        th:max="${preguntas[preguntaActual].max ?: 10000}"
                                        placeholder="Ingresa tu respuesta">
-                                <span class="input-group-text bg-light" 
+                                <span class="input-group-text bg-light"
                                       th:text="${preguntas[preguntaActual].unidad}"></span>
                             </div>
                         </div>
-                        
-                        <!-- Pregunta de selección -->
+
+                        <!-- Pregunta selección -->
                         <div th:if="${preguntas[preguntaActual].tipo == 'seleccion'}">
                             <div th:each="opcion : ${preguntas[preguntaActual].opciones}" class="mb-2">
                                 <label class="option-card">
-                                    <input class="option-radio" type="radio" 
-                                           th:id="${'opcion' + opcion.key}" 
-                                           name="respuesta" 
+                                    <input class="option-radio" type="radio"
+                                           th:id="${'opcion' + opcion.key}"
+                                           name="respuesta"
                                            th:value="${opcion.key}" required>
                                     <span class="option-label" th:text="${opcion.value}"></span>
                                 </label>
                             </div>
                         </div>
-                        
+
                         <button type="submit" class="submit-btn">
                             <span th:if="${preguntaActual < preguntas.size() - 1}">
                                 <i class="fas fa-arrow-right"></i> Siguiente
@@ -426,23 +387,15 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script -->
     <script>
-        // Efecto de selección para las opciones
         document.querySelectorAll('.option-card').forEach(card => {
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function () {
                 const radio = this.querySelector('input[type="radio"]');
                 radio.checked = true;
-                
-                // Remover selección de todas las opciones
-                document.querySelectorAll('.option-card').forEach(c => {
-                    c.classList.remove('selected');
-                });
-                
-                // Agregar selección a la opción clickeada
+                document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
             });
         });
     </script>
-</body>
-</html>
+</div>
