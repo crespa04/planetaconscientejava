@@ -18,9 +18,9 @@
         
         <!-- Cambio importante: Usar th:object en el formulario -->
         <form th:action="${noticia.id != null} ? @{/noticias/{id}(id=${noticia.id})} : @{/noticias}" 
-              method="post" enctype="multipart/form-data" class="noticia-form" th:object="${noticia}">
-              
-            <input type="hidden" name="_method" th:if="${noticia.id != null}" value="PUT">
+            method="post" enctype="multipart/form-data" class="noticia-form" th:object="${noticia}">
+            
+            <input type="hidden" name="_method" th:if="${noticia.id != null}" value="put">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             
             <!-- Campos del formulario -->

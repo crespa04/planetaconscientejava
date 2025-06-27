@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,28 +35,25 @@ public class NoticiaController {
         this.pdfGenerator = pdfGenerator;
     }
 
-    // --- Métodos principales ---
     @GetMapping
     public String index(
             @RequestParam(required = false) String busqueda,
             @RequestParam(required = false) String fuente,
-            @RequestParam(required = false) String fecha_desde,
-            @RequestParam(required = false) String fecha_hasta,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha_desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha_hasta,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
 
         Pageable pageable = PageRequest.of(page, size);
-        LocalDate fechaDesde = parseFecha(fecha_desde);
-        LocalDate fechaHasta = parseFecha(fecha_hasta);
 
-        if (fechasInvalidas(fechaDesde, fechaHasta)) {
+        if (fechasInvalidas(fecha_desde, fecha_hasta)) {
             model.addAttribute("errorFecha", "La fecha desde no puede ser mayor que la fecha hasta");
             model.addAttribute("filtros", new Filtros(busqueda, fuente, fecha_desde, fecha_hasta));
             return "noticias/index";
         }
 
-        Page<Noticia> noticias = noticiaService.findByFiltros(busqueda, fuente, fechaDesde, fechaHasta, pageable);
+        Page<Noticia> noticias = noticiaService.findByFiltros(busqueda, fuente, fecha_desde, fecha_hasta, pageable);
         model.addAttribute("noticias", noticias);
         model.addAttribute("fuentes", noticiaService.findAllFuentes());
         model.addAttribute("filtros", new Filtros(busqueda, fuente, fecha_desde, fecha_hasta));
@@ -67,17 +65,19 @@ public class NoticiaController {
     public ResponseEntity<byte[]> generarPdf(
             @RequestParam(required = false) String busqueda,
             @RequestParam(required = false) String fuente,
-            @RequestParam(required = false) String fecha_desde,
-            @RequestParam(required = false) String fecha_hasta) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha_desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha_hasta) {
 
         List<Noticia> noticias = noticiaService.findByFiltrosForExport(
             busqueda,
             fuente,
-            parseFecha(fecha_desde),
-            parseFecha(fecha_hasta)
+            fecha_desde,
+            fecha_hasta
         );
 
-        byte[] pdfBytes = pdfGenerator.generateNoticiasPdf(noticias, busqueda, fuente, fecha_desde, fecha_hasta);
+        byte[] pdfBytes = pdfGenerator.generateNoticiasPdf(noticias, busqueda, fuente, 
+            fecha_desde != null ? fecha_desde.toString() : null, 
+            fecha_hasta != null ? fecha_hasta.toString() : null);
         
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -133,7 +133,7 @@ public class NoticiaController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PostMapping("/{id}")
     public String actualizarNoticia(
             @PathVariable Long id,
             @ModelAttribute("noticia") @Valid Noticia noticia,
@@ -172,39 +172,45 @@ public class NoticiaController {
         return "redirect:/noticias";
     }
 
-    // --- Métodos auxiliares ---
-    private LocalDate parseFecha(String fechaStr) {
-        try {
-            return fechaStr != null && !fechaStr.isEmpty() ? LocalDate.parse(fechaStr) : null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
+    // --- Métodos auxiliares mejorados ---
     private boolean fechasInvalidas(LocalDate fechaDesde, LocalDate fechaHasta) {
-        return fechaDesde != null && fechaHasta != null && fechaDesde.isAfter(fechaHasta);
+        if (fechaDesde == null || fechaHasta == null) {
+            return false;
+        }
+        return fechaDesde.isAfter(fechaHasta);
     }
 
     private void validarImagen(MultipartFile imagen, BindingResult result) {
-        if (imagen != null && !imagen.isEmpty() && imagen.getSize() > MAX_FILE_SIZE) {
+        if (imagen == null || imagen.isEmpty()) {
+            return;
+        }
+        
+        if (imagen.getSize() > MAX_FILE_SIZE) {
             result.rejectValue("imagen", "file.size.exceeded", "El tamaño máximo permitido es 2MB");
         }
+        
     }
 
     private String manejarErrores(Noticia noticia, BindingResult result, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.noticia", result);
         redirectAttributes.addFlashAttribute("noticia", noticia);
-        return "noticias/form";
+
+        // Si la noticia tiene ID, es edición. Si no, es creación.
+        if (noticia.getId() != null) {
+            return "noticias/form";
+        } else {
+            return "noticias/form";
+        }
     }
 
-    // --- Clase interna para filtros ---
-    private static class Filtros {
+    // Clase Filtros mejorada
+    public static class Filtros {
         private final String busqueda;
         private final String fuente;
-        private final String fechaDesde;
-        private final String fechaHasta;
+        private final LocalDate fechaDesde;
+        private final LocalDate fechaHasta;
 
-        public Filtros(String busqueda, String fuente, String fechaDesde, String fechaHasta) {
+        public Filtros(String busqueda, String fuente, LocalDate fechaDesde, LocalDate fechaHasta) {
             this.busqueda = busqueda;
             this.fuente = fuente;
             this.fechaDesde = fechaDesde;
@@ -214,7 +220,16 @@ public class NoticiaController {
         // Getters
         public String getBusqueda() { return busqueda; }
         public String getFuente() { return fuente; }
-        public String getFechaDesde() { return fechaDesde; }
-        public String getFechaHasta() { return fechaHasta; }
+        public LocalDate getFechaDesde() { return fechaDesde; }
+        public LocalDate getFechaHasta() { return fechaHasta; }
+        
+        // Métodos útiles para la vista
+        public String getFechaDesdeFormatted() {
+            return fechaDesde != null ? fechaDesde.toString() : "";
+        }
+        
+        public String getFechaHastaFormatted() {
+            return fechaHasta != null ? fechaHasta.toString() : "";
+        }
     }
 }
