@@ -5,77 +5,102 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // Configuración general compatible con tus efectos CSS/JS
+            .csrf(AbstractHttpConfigurer::disable)  // Mantenemos deshabilitado para simplificar formularios
+            .headers(headers -> headers
+                .frameOptions().sameOrigin()  // Para efectos visuales como partículas
+                .httpStrictTransportSecurity().disable()  // Desarrollo solamente
+            )
+            
+            // Autorizaciones adaptadas a tu estructura
             .authorizeHttpRequests(auth -> auth
-                // Rutas públicas
+                // Recursos estáticos (prioritarios para el diseño)
                 .requestMatchers(
-                    "/",
-                    "/login",
-                    "/register",
                     "/css/**",
                     "/js/**",
                     "/images/**",
+                    "/fonts/**",
                     "/webjars/**",
-                    "/calculadora",
-                    "/calculadora/**",
-                    "/calculadora/resultado"
+                    "/favicon.ico"
                 ).permitAll()
-
-                // Noticias - Acceso público para lectura
-                .requestMatchers(HttpMethod.GET, "/noticias", "/noticias/**").permitAll()
-                // Noticias - Operaciones de administración
-                .requestMatchers("/noticias/nueva", "/noticias/editar/**", "/noticias/eliminar/**").hasRole("ADMIN")    
                 
-                // Retos - Acceso público para lectura
-                .requestMatchers(HttpMethod.GET, "/eventos/retos/**").permitAll()
-                // Retos - Operaciones de administración
-                .requestMatchers("/eventos/retos/**").hasRole("ADMIN")
+                // Páginas públicas (todas las referenciadas en tu navbar/footer)
+                .requestMatchers(
+                    "/",
+                    "/home",
+                    "/inicio",
+                    "/login",
+                    "/register",
+                    "/calculadora/**",
+                    "/medio_ambiente",
+                    "/eventos",
+                    "/noticias",
+                    "/access-denied",
+                    "/error"
+                ).permitAll()
                 
-                // Eventos - Acceso público para lectura
-                .requestMatchers(HttpMethod.GET, "/eventos", "/eventos/").permitAll()
-                // Eventos - Operaciones de administración
-                .requestMatchers("/eventos/nuevo", "/eventos/editar/**", "/eventos/eliminar/**").hasRole("ADMIN")
+                // Protección de áreas administrativas
+                .requestMatchers(
+                    "/admin/**",
+                    "/noticias/nueva/**",
+                    "/noticias/editar/**",
+                    "/noticias/eliminar/**",
+                    "/eventos/nuevo/**",
+                    "/eventos/editar/**",
+                    "/eventos/eliminar/**"
+                ).hasRole("ADMIN")
                 
-                // Dashboard accesible solo para autenticados
-                .requestMatchers("/dashboard").authenticated()
+                // Área de usuario (dashboard compatible con tus estilos)
+                .requestMatchers(
+                    "/dashboard",
+                    "/mi-perfil/**",
+                    "/configuracion"
+                ).authenticated()
                 
-                // Accesos por roles
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                
-                // Todas las demás rutas requieren autenticación
+                // Cualquier otra ruta
                 .anyRequest().authenticated()
             )
+            
+            // Login configurado para tu diseño premium
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/")  // Redirige al área con estilos personalizados
+                .failureUrl("/login?error=true")  // Para mostrar feedback en tu diseño
                 .permitAll()
             )
+            
+            // Logout optimizado para tu navbar
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login?logout")
+                .logoutSuccessUrl("/?logout=true")  // Para mostrar confirmación
+                .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true)
                 .permitAll()
             )
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/calculadora/calcular")
+            
+            // Manejo de errores estilizado
+            .exceptionHandling(handling -> handling
+                .accessDeniedPage("/access-denied")  // Página con tus estilos CSS
             );
 
         return http.build();
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

@@ -7,16 +7,29 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface NoticiaService {
-    // Métodos básicos
+    // Métodos de consulta
     Page<Noticia> findAll(Pageable pageable);
     
-    Page<Noticia> findByFiltros(String busqueda, String fuente, 
-                              LocalDate fechaDesde, LocalDate fechaHasta,
-                              Pageable pageable);
+    Page<Noticia> findByFiltros(
+        String busqueda, 
+        String fuente, 
+        LocalDate fechaDesde, 
+        LocalDate fechaHasta,
+        Pageable pageable
+    );
     
-    Noticia findById(Long id);
+    // Nuevo método para exportar a PDF (sin paginación)
+    List<Noticia> findByFiltrosForExport(
+        String busqueda, 
+        String fuente, 
+        LocalDate fechaDesde, 
+        LocalDate fechaHasta
+    );
+    
+    Optional<Noticia> findById(Long id); // Usar Optional para mejor manejo de nulos
     
     List<String> findAllFuentes();
     
@@ -27,13 +40,6 @@ public interface NoticiaService {
     
     void delete(Long id);
     
-    // Método adicional recomendado
-    default boolean noticiaExists(Long id) {
-        // Implementación por defecto opcional
-        try {
-            return findById(id) != null;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    // Método de verificación de existencia
+    boolean existsById(Long id);
 }
