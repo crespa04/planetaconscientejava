@@ -23,6 +23,12 @@ public class AuthController {
         return "login"; // login.html
     }
 
+    // Muestra dashboard (Spring Security maneja la autenticación)
+    @GetMapping("/dashboard")
+    public String showDashboard() {
+        return "dashboard"; // dashboard.html
+    }
+
     // Muestra formulario de registro
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
