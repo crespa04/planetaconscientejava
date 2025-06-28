@@ -165,6 +165,11 @@
             </div>
         </div>
     </th:block>
+
+    <!-- Mensaje de error de filtro con SweetAlert2 -->
+    <div th:if="${errorFiltro}" id="errorFiltroMsg" th:data-msg="${errorFiltro}" style="display:none;">
+        <!-- DEBUG: errorFiltro presente -->
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
