@@ -2,7 +2,6 @@ package com.app.planetaconsciente.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,16 +17,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Configuración general compatible con tus efectos CSS/JS
-            .csrf(AbstractHttpConfigurer::disable)  // Mantenemos deshabilitado para simplificar formularios
+            .csrf(AbstractHttpConfigurer::disable)
             .headers(headers -> headers
-                .frameOptions().sameOrigin()  // Para efectos visuales como partículas
-                .httpStrictTransportSecurity().disable()  // Desarrollo solamente
+                .frameOptions().sameOrigin()
             )
             
-            // Autorizaciones adaptadas a tu estructura
             .authorizeHttpRequests(auth -> auth
-                // Recursos estáticos (prioritarios para el diseño)
                 .requestMatchers(
                     "/css/**",
                     "/js/**",
@@ -37,7 +32,6 @@ public class SecurityConfig {
                     "/favicon.ico"
                 ).permitAll()
                 
-                // Páginas públicas (todas las referenciadas en tu navbar/footer)
                 .requestMatchers(
                     "/",
                     "/home",
@@ -48,11 +42,12 @@ public class SecurityConfig {
                     "/medio_ambiente",
                     "/eventos",
                     "/noticias",
+                    "/noticias/**",
                     "/access-denied",
                     "/error"
                 ).permitAll()
                 
-                // Protección de áreas administrativas
+                // Rutas administrativas
                 .requestMatchers(
                     "/admin/**",
                     "/noticias/nueva/**",
@@ -63,37 +58,26 @@ public class SecurityConfig {
                     "/eventos/eliminar/**"
                 ).hasRole("ADMIN")
                 
-                // Área de usuario (dashboard compatible con tus estilos)
-                .requestMatchers(
-                    "/dashboard",
-                    "/mi-perfil/**",
-                    "/configuracion"
-                ).authenticated()
-                
-                // Cualquier otra ruta
                 .anyRequest().authenticated()
             )
             
-            // Login configurado para tu diseño premium
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/")  // Redirige al área con estilos personalizados
-                .failureUrl("/login?error=true")  // Para mostrar feedback en tu diseño
+                .defaultSuccessUrl("/")
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
             
-            // Logout optimizado para tu navbar
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/?logout=true")  // Para mostrar confirmación
+                .logoutSuccessUrl("/?logout=true")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true)
                 .permitAll()
             )
             
-            // Manejo de errores estilizado
             .exceptionHandling(handling -> handling
-                .accessDeniedPage("/access-denied")  // Página con tus estilos CSS
+                .accessDeniedPage("/access-denied")
             );
 
         return http.build();

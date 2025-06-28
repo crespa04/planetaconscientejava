@@ -7,84 +7,141 @@
     <title layout:title-pattern="$CONTENT_TITLE - $DECORATOR_TITLE" 
            th:text="${noticia.titulo} + ' - Planeta Consciente'"></title>
     <link th:href="@{/css/noticia.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
-    <div layout:fragment="content" class="container mt-4">
-        <div class="card">
+    <div layout:fragment="content" class="container noticia-detalle-container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/noticias}">Noticias</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${noticia.titulo}"></li>
+            </ol>
+        </nav>
+
+        <!-- Tarjeta de Noticia -->
+        <article class="card shadow-sm mb-5">
+            <!-- Imagen Destacada -->
+            <div class="noticia-imagen-container">
+                <img th:if="${noticia.imagenUrl}" th:src="@{${noticia.imagenUrl}}" 
+                     th:alt="${noticia.titulo}" class="card-img-top"
+                     onerror="this.src='https://via.placeholder.com/800x450?text=Imagen+no+disponible'">
+                <img th:unless="${noticia.imagenUrl}" src="https://via.placeholder.com/800x450?text=Planeta+Consciente" 
+                     alt="Imagen de noticia" class="card-img-top">
+            </div>
+
             <div class="card-body">
-                <!-- Imagen -->
-                <div class="text-center mb-4">
-                    <img th:if="${noticia.imagenUrl}" th:src="@{${noticia.imagenUrl}}" 
-                         th:alt="${noticia.titulo}" class="img-fluid rounded" style="max-height: 400px;">
-                    <img th:unless="${noticia.imagenUrl}" src="https://via.placeholder.com/800x450?text=Planeta+Consciente" 
-                         alt="Imagen de noticia" class="img-fluid rounded" style="max-height: 400px;">
-                </div>
-                
-                <!-- Metadatos -->
-                <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                    <span class="badge bg-success" th:if="${noticia.destacada}">
-                        <i class="fas fa-star"></i> Destacada
-                    </span>
-                    <span class="text-muted">
-                        <i class="far fa-calendar-alt"></i> 
-                        <span th:text="${#temporals.format(noticia.fechaPublicacion, 'd MMMM yyyy', new java.util.Locale('es', 'ES'))}"></span>
-                    </span>
-                    <span class="text-muted" th:if="${noticia.fuente}">
-                        <i class="fas fa-newspaper"></i> 
-                        <span th:text="${noticia.fuente}"></span>
-                    </span>
-                </div>
-                
-                <!-- Título -->
-                <h1 class="mb-4" th:text="${noticia.titulo}"></h1>
-                
+                <!-- Encabezado con Metadatos -->
+                <header class="noticia-header mb-4">
+                    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+                        <span class="badge bg-success" th:if="${noticia.destacada}">
+                            <i class="fas fa-star"></i> Destacada
+                        </span>
+                        <span class="text-muted">
+                            <i class="far fa-calendar-alt"></i> 
+                            <span th:text="${#temporals.format(noticia.fechaPublicacion, 'EEEE, d MMMM yyyy', new java.util.Locale('es', 'ES'))}"></span>
+                        </span>
+                        <span class="text-muted" th:if="${noticia.fuente}">
+                            <i class="fas fa-newspaper"></i> 
+                            <span th:text="${noticia.fuente}"></span>
+                        </span>
+                    </div>
+                    
+                    <!-- Título -->
+                    <h1 class="mb-3" th:text="${noticia.titulo}"></h1>
+                </header>
+
                 <!-- Resumen -->
-                <div class="lead mb-4" th:utext="${#strings.replace(#strings.escapeXml(noticia.resumen), '&#10;', '&lt;br /&gt;')}"></div>
-                
+                <section class="noticia-resumen lead mb-4" 
+                         th:utext="${#strings.escapeXml(noticia.resumen)?.replace('\n', '&lt;br&gt;')}">
+                </section>
+
                 <!-- Contenido -->
-                <div class="mb-4" th:utext="${#strings.replace(#strings.escapeXml(noticia.contenido), '&#10;', '&lt;br /&gt;')}"></div>
-                
-                <!-- Acciones -->
-                <div class="d-flex justify-content-between">
+                <section class="noticia-contenido mb-4" 
+                         th:utext="${#strings.escapeXml(noticia.contenido)?.replace('\n', '&lt;br&gt;')}">
+                </section>
+
+                <!-- Botones de Acción -->
+                <footer class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                     <a th:href="@{/noticias}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left"></i> Volver a noticias
+                        <i class="fas fa-arrow-left me-2"></i> Volver a noticias
                     </a>
                     
-                    <div sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/noticias/{id}/editar(id=${noticia.id})}" class="btn btn-outline-primary me-2">
-                            <i class="fas fa-edit"></i> Editar
+                    <!-- Botones de Administración (solo para ADMIN) -->
+                    <div sec:authorize="hasRole('ADMIN')" class="btn-group">
+                        <a th:href="@{/noticias/{id}/editar(id=${noticia.id})}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i> Editar
                         </a>
-                        
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete">
-                            <i class="fas fa-trash-alt"></i> Eliminar
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete">
+                            <i class="fas fa-trash-alt me-2"></i> Eliminar
                         </button>
+                    </div>
+                </footer>
+            </div>
+        </article>
+
+        <!-- Noticias Relacionadas (opcional) -->
+        <section class="mb-5" th:if="${noticiasRelacionadas != null and !noticiasRelacionadas.empty}">
+            <h2 class="h4 mb-4">Noticias relacionadas</h2>
+            <div class="row">
+                <div class="col-md-4 mb-3" th:each="relacionada : ${noticiasRelacionadas}">
+                    <div class="card h-100">
+                        <a th:href="@{/noticias/{id}(id=${relacionada.id})}">
+                            <img th:src="${relacionada.imagenUrl} ?: 'https://via.placeholder.com/300x200?text=Planeta+Consciente'" 
+                                 class="card-img-top" th:alt="${relacionada.titulo}">
+                        </a>
+                        <div class="card-body">
+                            <h3 class="h6 card-title">
+                                <a th:href="@{/noticias/{id}(id=${relacionada.id})}" th:text="${relacionada.titulo}"></a>
+                            </h3>
+                            <p class="card-text text-muted small" 
+                               th:text="${#temporals.format(relacionada.fechaPublicacion, 'd MMM yyyy', new java.util.Locale('es', 'ES'))}"></p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+    </div>
 
-        <!-- Modal de confirmación para eliminar -->
+    <!-- Modal de Confirmación para Eliminar -->
+    <div layout:fragment="modals">
         <div class="modal fade" id="confirmDelete" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-light">
                         <h5 class="modal-title">Confirmar eliminación</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        ¿Estás seguro de que deseas eliminar esta noticia? Esta acción no se puede deshacer.
+                        <p>¿Estás seguro de que deseas eliminar la noticia "<strong th:text="${noticia.titulo}"></strong>"?</p>
+                        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Esta acción no se puede deshacer.</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i> Cancelar
+                        </button>
                         <form th:action="@{/noticias/{id}/eliminar(id=${noticia.id})}" method="POST">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-2"></i> Eliminar
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script>
+            // Depuración de roles (puedes eliminar esto en producción)
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("Usuario autenticado:", document.querySelector('[sec\\:authentication="name"]')?.innerText);
+                console.log("Roles:", document.querySelector('[sec\\:authentication="principal.authorities"]')?.innerText);
+            });
+        </script>
     </div>
 </body>
 </html>
