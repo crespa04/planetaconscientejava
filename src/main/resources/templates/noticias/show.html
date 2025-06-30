@@ -367,14 +367,6 @@
 </head>
 <body>
     <div layout:fragment="content" class="container noticia-detalle-container">
-        <!-- Breadcrumb mejorado -->
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/}"><i class="fas fa-home"></i> Inicio</a></li>
-                <li class="breadcrumb-item"><a th:href="@{/noticias}"><i class="far fa-newspaper"></i> Noticias</a></li>
-                <li class="breadcrumb-item active" aria-current="page" th:text="${noticia.titulo}"></li>
-            </ol>
-        </nav>
 
         <!-- Tarjeta de Noticia Premium -->
         <article class="noticia-detalle">

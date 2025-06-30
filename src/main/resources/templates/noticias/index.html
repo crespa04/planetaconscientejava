@@ -6,6 +6,9 @@
 <head>
     <title>Noticias Ambientales - Planeta Consciente</title>
     <link th:href="@{/css/noticia.css}" rel="stylesheet">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 </head>
 
 <body>
@@ -103,10 +106,17 @@
                 <div class="noticia-card">
                     <div class="noticia-imagen-container">
                         <th:block th:if="${noticia.imagenUrl}">
-                            <img th:src="@{${noticia.imagenUrl}}" th:alt="${noticia.titulo}" class="noticia-imagen" loading="lazy">
+                            <img th:src="@{${noticia.imagenUrl} + '?v=' + ${#dates.createNow().time}}" 
+                                 th:alt="${noticia.titulo}" 
+                                 class="noticia-imagen" 
+                                 loading="lazy"
+                                 onerror="this.src='https://source.unsplash.com/random/600x400/?nature,eco'">
                         </th:block>
                         <th:block th:unless="${noticia.imagenUrl}">
-                            <img src="https://source.unsplash.com/random/600x400/?nature,eco" alt="Imagen de noticia" class="noticia-imagen" loading="lazy">
+                            <img src="https://source.unsplash.com/random/600x400/?nature,eco" 
+                                 alt="Imagen de noticia" 
+                                 class="noticia-imagen" 
+                                 loading="lazy">
                         </th:block>
                     </div>
 
@@ -114,7 +124,6 @@
                         <div class="noticia-meta">
                             <span class="noticia-date"><i class="far fa-calendar-alt"></i> 
                                 <span th:text="${noticia.fechaPublicacion != null ? #temporals.format(noticia.fechaPublicacion, 'dd MMM, yyyy') : 'Sin fecha'}"></span>
-
                             </span>
                             <th:block th:if="${noticia.fuente}">
                                 <span class="noticia-source" th:text="${noticia.fuente}"></span>
@@ -167,14 +176,13 @@
     </th:block>
 
     <!-- Mensaje de error de filtro con SweetAlert2 -->
-    <div th:if="${errorFiltro}" id="errorFiltroMsg" th:data-msg="${errorFiltro}" style="display:none;">
-        <!-- DEBUG: errorFiltro presente -->
-    </div>
+    <div th:if="${errorFiltro}" id="errorFiltroMsg" th:data-msg="${errorFiltro}" style="display:none;"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Actualizar fecha y hora
         function updateDateTime() {
             const now = new Date();
             const options = {
@@ -189,6 +197,28 @@
         }
         updateDateTime();
         setInterval(updateDateTime, 60000);
+
+        // Forzar recarga de imágenes después de guardar/actualizar
+        if (new URLSearchParams(window.location.search).has('forceRefresh')) {
+            document.querySelectorAll('img').forEach(img => {
+                const src = img.src;
+                if (src.indexOf('?') === -1) {
+                    img.src = src + '?v=' + new Date().getTime();
+                } else {
+                    img.src = src.split('?')[0] + '?v=' + new Date().getTime();
+                }
+            });
+        }
+
+        // Mostrar mensajes de error
+        const errorMsg = document.getElementById('errorFiltroMsg');
+        if (errorMsg && errorMsg.dataset.msg) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en filtros',
+                text: errorMsg.dataset.msg
+            });
+        }
     });
 </script>
 </body>
