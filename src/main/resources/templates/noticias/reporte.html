@@ -149,6 +149,19 @@
             color: #4caf7d;
             pointer-events: none;
         }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-content img.logo {
+            height: 50px;
+            width: auto;
+        }
     </style>
     <!-- Iconos de Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -159,8 +172,13 @@
     </div>
 
     <div class="header">
-        <h1><i class="fas fa-leaf"></i> Reporte de Noticias Ambientales</h1>
-        <p>Planeta Consciente - Generado el <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span></p>
+        <div class="header-content">
+            <img th:src="/images/1.jpg" alt="Logo Planeta Consciente" class="logo">
+            <div>
+                <h1><i class="fas fa-leaf"></i> Reporte de Noticias Ambientales</h1>
+                <p>Planeta Consciente - Generado el <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span></p>
+            </div>
+        </div>
     </div>
 
     <div th:if="${filtros.busqueda != null or filtros.fuente != null or filtros.fechaDesde != null or filtros.fechaHasta != null or filtros.categoria != null}" class="filtros">
@@ -189,6 +207,10 @@
             <span th:if="${noticia.destacada}" class="badge">
                 <i class="fas fa-star"></i> Destacada
             </span>
+        </div>
+        <!-- Mostrar imagen si existe -->
+        <div th:if="${noticia.imagenUrl != null and #strings.isNotEmpty(noticia.imagenUrl)}" style="text-align:center;margin-bottom:10px;">
+            <img th:src="@{${noticia.imagenUrl}}" alt="Imagen noticia" style="max-width:350px;max-height:200px;border-radius:8px;">
         </div>
         <div class="noticia-meta">
             <span><i class="far fa-calendar"></i> <span th:text="${#temporals.format(noticia.fechaPublicacion, 'dd/MM/yyyy')}"></span></span>
