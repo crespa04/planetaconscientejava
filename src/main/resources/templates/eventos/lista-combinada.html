@@ -33,7 +33,6 @@
               min-height: 100vh;
             }
             
-            /* Fondo ambiental mejorado con animaciones */
             body::before {
               content: "";
               position: fixed;
@@ -55,7 +54,6 @@
               100% { background-position: 0 0, 300px 300px; }
             }
             
-            /* Elementos naturales animados */
             .nature-bg-element {
               position: fixed;
               z-index: -1;
@@ -107,7 +105,6 @@
               75% { transform: translateY(30px) rotate(-5deg) scale(0.95); }
             }
             
-            /* Efecto de partículas */
             .particles {
               position: fixed;
               top: 0;
@@ -390,7 +387,6 @@
               box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             }
             
-            /* Botones mejorados con efecto natural */
             .btn {
               display: inline-flex;
               align-items: center;
@@ -462,7 +458,6 @@
               background-color: #fff5f5;
             }
             
-            /* Botones de acción */
             .btn-accion {
               width: 36px;
               height: 36px;
@@ -483,7 +478,6 @@
               gap: 0.5rem;
             }
             
-            /* Tarjeta de mes con efecto de hoja */
             .mes-card {
               background-color: var(--secondary);
               padding: 1.5rem;
@@ -597,7 +591,6 @@
               color: #155724;
             }
             
-            /* Footer links con efecto de crecimiento */
             .footer-links {
               list-style: none;
               padding-left: 0;
@@ -655,26 +648,25 @@
               color: var(--primary);
             }
             
-            /* Efecto de agua para el hover de las tarjetas */
             .water-effect {
               position: relative;
               overflow: hidden;
             }
             
-            
-            
-            @keyframes ripple {
-              0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-              }
-              100% {
-                transform: scale(20, 20);
-                opacity: 0;
-              }
+            .event-card {
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
+              cursor: pointer;
             }
             
-            /* Responsive */
+            .event-card:hover {
+              transform: translateY(-3px);
+              box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+            }
+            
+            .event-card .acciones-evento {
+              z-index: 2;
+            }
+            
             @media (max-width: 768px) {
               .layout-container {
                 grid-template-columns: 1fr;
@@ -713,68 +705,67 @@
         </div>
         
         <!-- Caja Eventos -->
-<div class="seccion-independiente water-effect">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="seccion-titulo mb-0">
-            <i class="fas fa-calendar-alt"></i>
-            Próximos Eventos en Bogotá
-        </h3>
-        <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <a th:href="@{/eventos/nuevo}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nuevo Evento
-            </a>
-        </div>
-    </div>
-
-    <div th:if="${not #lists.isEmpty(eventos)}" class="layout-container">
-        <div th:each="evento : ${eventos}"
-             class="seccion-independiente water-effect"
-             style="display: flex; flex-direction: column; justify-content: space-between; position: relative; padding: 1.5rem; cursor: pointer;"
-             onclick="window.location.href = /*[[${'/eventos/' + evento.id}]]*/''">
-
-            <div style="flex-grow: 1;">
-                <h4 class="seccion-titulo mb-2">
-                    <i class="fas fa-leaf"></i>
-                    <span th:text="${evento.titulo} ?: 'Sin título'"></span>
-                </h4>
-
-                <p class="mb-2">
-                    <strong th:text="${#temporals.format(evento.fechaHora, 'dd MMM. yyyy')}"></strong><br>
-                    <span th:if="${evento.ubicacion}">
-                        📍 <span th:text="${evento.ubicacion}"></span><br>
-                    </span>
-                    <span th:if="${evento.descripcion}" th:text="${#strings.abbreviate(evento.descripcion, 100)}"></span>
-                </p>
+        <div class="seccion-independiente water-effect">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="seccion-titulo mb-0">
+                    <i class="fas fa-calendar-alt"></i>
+                    Próximos Eventos en Bogotá
+                </h3>
+                <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a th:href="@{/eventos/nuevo}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nuevo Evento
+                    </a>
+                </div>
             </div>
 
-            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="acciones-evento mt-2" style="justify-content: flex-end;">
-                <a th:href="@{/eventos/editar/{id}(id=${evento.id})}"
-                   class="btn btn-outline-secondary btn-accion"
-                   title="Editar evento"
-                   onclick="event.stopPropagation();">
-                    <i class="fas fa-edit"></i>
-                </a>
+            <div th:if="${not #lists.isEmpty(eventos)}" class="layout-container">
+                <div th:each="evento : ${eventos}"
+                     class="seccion-independiente water-effect event-card"
+                     style="display: flex; flex-direction: column; justify-content: space-between; position: relative; padding: 1.5rem;"
+                     th:attr="data-href=@{/eventos/{id}(id=${evento.id})}">
 
-                <form th:action="@{/eventos/eliminar/{id}(id=${evento.id})}"
-                      method="post"
-                      onsubmit="event.stopPropagation();" style="display: inline;">
-                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                    <button type="submit"
-                            class="btn btn-outline-danger btn-accion"
-                            title="Eliminar evento"
-                            onclick="return confirm('¿Eliminar este evento?')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </form>
+                    <div style="flex-grow: 1;">
+                        <h4 class="seccion-titulo mb-2">
+                            <i class="fas fa-leaf"></i>
+                            <span th:text="${evento.titulo} ?: 'Sin título'"></span>
+                        </h4>
+
+                        <p class="mb-2">
+                            <strong th:text="${#temporals.format(evento.fechaHora, 'dd MMM. yyyy')}"></strong><br>
+                            <span th:if="${evento.ubicacion}">
+                                📍 <span th:text="${evento.ubicacion}"></span><br>
+                            </span>
+                            <span th:if="${evento.descripcion}" th:text="${#strings.abbreviate(evento.descripcion, 100)}"></span>
+                        </p>
+                    </div>
+
+                    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="acciones-evento mt-2" style="justify-content: flex-end;">
+                        <a th:href="@{/eventos/editar/{id}(id=${evento.id})}"
+                           class="btn btn-outline-secondary btn-accion"
+                           title="Editar evento"
+                           onclick="event.stopPropagation();">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <form th:action="@{/eventos/eliminar/{id}(id=${evento.id})}"
+                              method="post"
+                              onsubmit="event.stopPropagation();" style="display: inline;">
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            <button type="submit"
+                                    class="btn btn-outline-danger btn-accion"
+                                    title="Eliminar evento"
+                                    onclick="return confirm('¿Eliminar este evento?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(eventos)}" class="alert alert-info mt-3">
+                No hay eventos programados para este mes.
             </div>
         </div>
-    </div>
-
-    <div th:if="${#lists.isEmpty(eventos)}" class="alert alert-info mt-3">
-        No hay eventos programados para este mes.
-    </div>
-</div>
-
         
         <!-- Caja Retos mejorada -->
         <div class="seccion-independiente water-effect">
@@ -810,7 +801,6 @@
             </div>
         </div>
         
-        
         <!-- Caja Organizaciones mejorada -->
         <div class="seccion-independiente water-effect">
             <h3 class="seccion-titulo">
@@ -838,13 +828,23 @@
               </ul>
         </div>
     </div>
-    
 
     <th:block layout:fragment="scripts">
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // Manejar clic en las tarjetas de evento
+                document.querySelectorAll('.event-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        // Solo redireccionar si no se hizo clic en un elemento interactivo
+                        if (!e.target.closest('a, button, [onclick], form, input')) {
+                            window.location.href = this.getAttribute('data-href');
+                        }
+                    });
+                });
+
+                // Código existente para el calendario y partículas
                 var calendarEl = document.getElementById('calendar');
                 if(calendarEl) {
                     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -866,13 +866,11 @@
                         const particle = document.createElement('div');
                         particle.classList.add('particle');
                         
-                        // Posición aleatoria
                         const posX = Math.random() * 100;
                         const size = Math.random() * 5 + 3;
                         const duration = Math.random() * 10 + 10;
                         const delay = Math.random() * 15;
                         
-                        // Estilo de la partícula
                         particle.style.width = `${size}px`;
                         particle.style.height = `${size}px`;
                         particle.style.left = `${posX}%`;
