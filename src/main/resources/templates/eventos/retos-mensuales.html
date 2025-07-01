@@ -3,13 +3,115 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
 <head>
-    <title>Retos por Mes</title>
+    <title>🌱 Retos por Mes | Planeta Consciente</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@600&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+            color: #2e7d32;
+        }
+
+        .titulo-principal {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .mes-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+            border-left: 8px solid #81c784;
+            transition: transform 0.2s ease;
+        }
+
+        .mes-card:hover {
+            transform: scale(1.01);
+        }
+
+        .mes-titulo {
+            font-size: 1.9rem;
+            color: #388e3c;
+            border-bottom: 2px solid #c8e6c9;
+            padding-bottom: 6px;
+            margin-bottom: 18px;
+            font-weight: bold;
+        }
+
+        .reto-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9fbe7;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px dashed #c5e1a5;
+        }
+
+        .reto-descripcion {
+            margin: 0;
+            flex-grow: 1;
+            font-size: 1.05rem;
+            color: #33691e;
+        }
+
+        .badge-dificultad {
+            padding: 8px 16px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .badge-dificultad.facil {
+            background-color: #66bb6a; /* Verde claro */
+        }
+
+        .badge-dificultad.media {
+            background-color: #ffee58; /* Amarillo */
+            color: #3e2723;
+        }
+
+        .badge-dificultad.alta {
+            background-color: #ef5350; /* Rojo claro */
+        }
+
+        .alert-info {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            color: #388e3c;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .btn-outline-secondary {
+            border-color: #2e7d32;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        .volver {
+            text-align: center;
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content" class="container py-4">
-    <h1 class="titulo-principal text-center mb-4">🌿 Retos Ambientales por Mes</h1>
+    <h1 class="titulo-principal text-center">🌿 Retos Ambientales por Mes</h1>
 
-    <div th:if="${#maps.isEmpty(retosPorMes)}" class="alert alert-info">
+    <div th:if="${#maps.isEmpty(retosPorMes)}" class="alert alert-info text-center">
         No hay retos disponibles por el momento.
     </div>
 
@@ -49,84 +151,9 @@
         </div>
     </div>
 
-    <a th:href="@{/eventos}" class="btn btn-outline-secondary mt-4">← Volver</a>
+    <div class="volver">
+        <a th:href="@{/eventos}" class="btn btn-outline-secondary btn-lg">← Volver a Eventos</a>
+    </div>
 </div>
 </body>
 </html>
-<style>
-    .titulo-principal {
-        font-size: 2.5rem;
-        color: #2c3e50;
-        font-weight: 600;
-    }
-
-    .mes-card {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .mes-titulo {
-        font-size: 1.8rem;
-        color: #2980b9;
-        margin-bottom: 15px;
-        border-bottom: 2px solid #e9ecef;
-        padding-bottom: 8px;
-    }
-
-    .reto-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        background-color: white;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-
-    .reto-descripcion {
-        margin: 0;
-        flex-grow: 1;
-        padding-right: 20px;
-    }
-
-    .badge-dificultad {
-        padding: 6px 12px;
-        border-radius: 20px;
-        color: white;
-        font-weight: 500;
-        font-size: 0.9rem;
-        min-width: 80px;
-        text-align: center;
-    }
-
-    .badge-dificultad.facil {
-        background-color: #28a745; /* Verde */
-    }
-
-    .badge-dificultad.media {
-        background-color: #ffc107; /* Amarillo */
-        color: #212529;
-    }
-
-    .badge-dificultad.alta {
-        background-color: #dc3545; /* Rojo */
-    }
-
-    .alert-info {
-        background-color: #d1ecf1;
-        border-color: #bee5eb;
-        color: #0c5460;
-    }
-
-    .btn-outline-secondary {
-        transition: all 0.3s ease;
-    }
-
-    .btn-outline-secondary:hover {
-        background-color: #6c757d;
-        color: white;
-    }
-</style>
