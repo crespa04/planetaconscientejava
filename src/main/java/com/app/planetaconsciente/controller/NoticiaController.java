@@ -4,8 +4,6 @@ import com.app.planetaconsciente.model.Noticia;
 import com.app.planetaconsciente.service.NoticiaService;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -3,7 +3,6 @@ package com.app.planetaconsciente.service.impl;
 import com.app.planetaconsciente.model.Noticia;
 import com.app.planetaconsciente.repository.NoticiaRepository;
 import com.app.planetaconsciente.service.NoticiaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ public class NoticiaServiceImpl implements NoticiaService {
 
     private final NoticiaRepository noticiaRepository;
 
-    @Autowired
     public NoticiaServiceImpl(NoticiaRepository noticiaRepository) {
         this.noticiaRepository = noticiaRepository;
     }
