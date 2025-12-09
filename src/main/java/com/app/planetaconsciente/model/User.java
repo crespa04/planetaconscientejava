@@ -25,17 +25,30 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<UserRole> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Foro> publicaciones = new ArrayList<>();
+
+    // Campos nuevos para verificación y recuperación
+    @Column(name = "enabled")
+    private boolean enabled = false; // Cambiado a false por defecto
+
+    @Column(name = "verification_token", length = 64)
+    private String verificationToken;
+
+    @Column(name = "reset_password_token", length = 64)
+    private String resetPasswordToken;
+
+    @Column(name = "token_expiration_date")
+    private Date tokenExpirationDate;
 
     // UserDetails implementation
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(rol -> new SimpleGrantedAuthority("ROLE_" + rol))
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getRole()))
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +74,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     // Getters and Setters
@@ -98,11 +111,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public List<String> getRoles() {
+    public List<UserRole> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<String> roles) {
+    public void setRoles(List<UserRole> roles) {
         this.roles = roles;
     }
 
@@ -112,5 +125,39 @@ public class User implements UserDetails {
 
     public void setPublicaciones(List<Foro> publicaciones) {
         this.publicaciones = publicaciones;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public Date getTokenExpirationDate() {
+        return tokenExpirationDate;
+    }
+
+    public void setTokenExpirationDate(Date tokenExpirationDate) {
+        this.tokenExpirationDate = tokenExpirationDate;
+    }
+
+    // Métodos utilitarios
+    public boolean isTokenExpired() {
+        return this.tokenExpirationDate != null && 
+               this.tokenExpirationDate.before(new Date());
     }
 }

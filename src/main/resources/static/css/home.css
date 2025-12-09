@@ -6,9 +6,9 @@
     --feature-icon-gradient: linear-gradient(135deg, rgba(76, 175, 125, 0.1) 0%, rgba(58, 141, 102, 0.1) 100%);
     --primary: #15631b;  /* Color principal verde */
     --primary-light: #07661c;
-    --primary-dark: #2a674d;
+    --primary-dark: #2a674d; 
     --secondary: #f8fafc;  /* Fondo claro */
-    --accent: #07661c;     /* Color de acento */
+    --accent: #4caf7d;     /* Color de acento */
     --accent-dark: #3a8d66;
     --accent-light: #e8f5e9;
     --white: #ffffff;

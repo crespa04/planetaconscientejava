@@ -1,6 +1,7 @@
 package com.app.planetaconsciente.service;
 
 import com.app.planetaconsciente.model.User;
+import com.app.planetaconsciente.model.UserRole;
 import com.app.planetaconsciente.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,8 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,13 +42,16 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("La contraseña no puede estar vacía");
         }
 
-        // Asignar rol por defecto si no viene ninguno
+        // Asignar rol por defecto
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(List.of("USER"));
+            user.setRoles(new ArrayList<>());
+            user.getRoles().add(new UserRole(user, "USER"));
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        user.setEnabled(false);
+
+        userRepository.save(user); // cascade = ALL guarda roles
     }
 
     @Override
@@ -54,24 +62,58 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
             user.getEmail(),
             user.getPassword(),
+            user.isEnabled(), // ✅ Ahora usa el campo enabled
+            true, // accountNonExpired
+            true, // credentialsNonExpired
+            true, // accountNonLocked
             getAuthorities(user.getRoles())
         );
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(List<String> roles) {
+    private Collection<? extends GrantedAuthority> getAuthorities(List<UserRole> roles) {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role)) // Asegura el prefijo ROLE_
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getRole()))
                 .collect(Collectors.toList());
     }
 
-    // Método para crear usuario admin (opcional, para desarrollo)
-    public void createAdminUser() {
-        if (!userRepository.findByEmail("admin@planetaconsciente.com").isPresent()) {
-            User admin = new User();
-            admin.setEmail("admin@planetaconsciente.com");
-            admin.setPassword("admin123");
-            admin.setRoles(List.of("ADMIN"));
-            registerNewUser(admin);
-        }
+    // Métodos nuevos para verificación y recuperación
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    // ✅ CORREGIDO: Devuelve Optional<User> en lugar de User
+    public Optional<User> findByVerificationToken(String token) {
+        return userRepository.findByVerificationToken(token);
+    }
+
+    // ✅ CORREGIDO: Devuelve Optional<User> en lugar de User
+    public Optional<User> findByResetPasswordToken(String token) {
+        return userRepository.findByResetPasswordToken(token);
+    }
+
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
+    /**
+     * Calcula la fecha de expiración para tokens
+     * @param hours horas de validez del token
+     * @return fecha de expiración
+     */
+    public Date calculateExpiryDate(int hours) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.HOUR, hours);
+        return cal.getTime();
+    }
+
+    /**
+     * Verifica si un usuario existe y está habilitado
+     */
+    public boolean userExistsAndEnabled(String email) {
+        return userRepository.findByEmail(email)
+                .map(User::isEnabled)
+                .orElse(false);
     }
 }

@@ -23,12 +23,7 @@
                 <!-- Decoración de hojas flotantes -->
                 <div class="welcome-decoration">
                     <span th:each="i : ${#numbers.sequence(1, 12)}" 
-                          th:style="'width: ' + ${10 + T(java.lang.Math).random() * 20} + 'px; ' +
-                                   'height: ' + ${10 + T(java.lang.Math).random() * 20} + 'px; ' +
-                                   'left: ' + ${T(java.lang.Math).random() * 100} + '%; ' +
-                                   'animation-duration: ' + ${10 + T(java.lang.Math).random() * 10} + 's; ' +
-                                   'animation-delay: ' + ${T(java.lang.Math).random() * 5} + 's; ' +
-                                   'opacity: ' + ${0.3 + T(java.lang.Math).random() * 0.4} + ';'"></span>
+                          th:style="'width: 15px; height: 15px; left: ' + ${i * 8} + '%; animation-duration: 12s; animation-delay: ' + ${i * 0.5} + 's; opacity: 0.5;'"></span>
                 </div>
                 
                 <!-- Contenido principal con animación -->
@@ -38,7 +33,7 @@
                     </div>
                     <h2>
                         <span class="welcome-title-main">Bienvenido a Planeta Consciente,</span>
-                        <span class="welcome-user-name" th:text="${#authentication.principal.username}"></span>!
+                        <span class="welcome-user-name" th:text="${#authentication.principal != null ? #authentication.principal.username : 'Usuario'}"></span>!
                     </h2>
                     
                     <p class="welcome-success-message">
@@ -335,16 +330,7 @@
                 </div>
                 <h2>¿Listo para marcar la diferencia?</h2>
                 <p>Regístrate ahora y recibe nuestro plan de acción personalizado para reducir tu impacto ambiental. Cada paso cuenta en la protección de nuestro planeta.</p>
-                <div class="cta-buttons">
-                    <a th:href="@{/register}" class="cta-button primary">
-                        <span>Empieza ahora</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                    <a th:href="@{/login}" class="cta-button secondary">
-                        <span>Ya tengo cuenta</span>
-                        <i class="fas fa-user"></i>
-                    </a>
-                </div>
+
                 <div class="cta-stats">
                     <div class="stat-item">
                         <i class="fas fa-users"></i>

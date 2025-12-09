@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymymeaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
 <head>
-    <meta charset="UTF-8">
-    <title>Foro Ecológico | Comunidad Ambiental</title>
+    <title>Foro Ecológico | Planeta Consciente</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<div layout:fragment="content">
     <style>
 :root {
-    --primary: #2E7D32;
-    --primary-dark: #1B5E20;
-    --primary-light: #4CAF50;
-    --secondary: #E8F5E9;
-    --accent: #FFC107;
-    --text: #263238;
-    --text-light: #607D8B;
-    --white: #FFFFFF;
-    --gray-light: #F5F5F5;
-    --gray: #E0E0E0;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
-    --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
+    --primary: #2e7d32;            /* Verde principal */
+    --primary-dark: #1b5e20;       /* Verde oscuro */
+    --primary-darker: #0d3b13;     /* Verde más oscuro para títulos */
+    --primary-light: #81c784;      /* Verde claro brillante */
+    --secondary: #e8f5e9;          /* Fondo verde muy claro */
+    --secondary-light: #f1f8e9;    /* Segundo tono de fondo */
+    --accent: #66bb6a;             /* Verde para destacar */
+    --text: #2e7d32;               /* Texto en verde */
+    --text-dark: #1b5e20;          /* Texto más oscuro */
+    --text-darker: #0d3b13;        /* Texto muy oscuro para mejor contraste */
+    --text-light: #33691e;         /* Texto verde más suave */
+    --white: #ffffff;
+    --gray-light: #f9fbe7;         /* Fondo crema verdoso */
+    --gray: #c8e6c9;               /* Bordes verdes claros */
+    --shadow-sm: 0 2px 8px rgba(46, 125, 50, 0.1);
+    --shadow-md: 0 4px 12px rgba(46, 125, 50, 0.15);
+    --shadow-lg: 0 8px 24px rgba(46, 125, 50, 0.2);
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -34,14 +42,15 @@
 
 body {
     font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, var(--secondary), var(--secondary-light));
     color: var(--text);
-    background-color: var(--gray-light);
     line-height: 1.6;
 }
 
 h1, h2, h3, h4 {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
+    color: var(--text-darker); /* Cambiado a verde más oscuro */
 }
 
 a {
@@ -63,6 +72,7 @@ a {
     position: relative;
     overflow: hidden;
     margin-bottom: 2rem;
+    border-bottom: 4px solid var(--primary-light);
 }
 
 .forum-hero::before {
@@ -89,6 +99,7 @@ a {
     margin-bottom: 1rem;
     text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     animation: fadeInDown 0.8s ease-out;
+    color: #ffffff; /* Blanco para el título en el hero */
 }
 
 .hero-title i {
@@ -102,6 +113,7 @@ a {
     margin-bottom: 1.5rem;
     opacity: 0.9;
     animation: fadeIn 1s ease-out 0.3s both;
+    color: rgba(255, 255, 255, 0.9); /* Blanco semi-transparente */
 }
 
 @keyframes fadeInDown {
@@ -121,7 +133,8 @@ a {
     margin-bottom: 3rem;
     overflow: hidden;
     transition: var(--transition);
-    border: 1px solid rgba(0,0,0,0.05);
+    border-left: 8px solid var(--primary-light);
+    border: 1px solid var(--gray);
 }
 
 .create-post-card:hover {
@@ -136,6 +149,7 @@ a {
     font-size: 1.2rem;
     display: flex;
     align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .card-header h3 {
@@ -156,8 +170,8 @@ a {
 .form-group label {
     display: block;
     margin-bottom: 0.8rem;
-    font-weight: 500;
-    color: var(--primary-dark);
+    font-weight: 600;
+    color: var(--text-darker); /* Cambiado a verde más oscuro */
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.5px;
@@ -172,6 +186,7 @@ a {
     margin-bottom: 0.5rem;
     transition: var(--transition);
     background-color: var(--gray-light);
+    color: var(--text-light);
 }
 
 .form-control:focus {
@@ -212,6 +227,7 @@ textarea.form-control {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 0.9rem;
+    border: 1px solid var(--primary-dark);
 }
 
 .btn-post:hover {
@@ -237,7 +253,8 @@ textarea.form-control {
     box-shadow: var(--shadow-sm);
     overflow: hidden;
     transition: var(--transition);
-    border: 1px solid rgba(0,0,0,0.05);
+    border-left: 8px solid var(--primary-light);
+    border: 1px solid var(--gray);
 }
 
 .post-card:hover {
@@ -272,6 +289,7 @@ textarea.form-control {
     font-weight: bold;
     font-size: 1.2rem;
     box-shadow: var(--shadow-sm);
+    border: 2px solid var(--white);
 }
 
 .user-details {
@@ -281,7 +299,8 @@ textarea.form-control {
 
 .user-details strong {
     font-weight: 600;
-    color: var(--primary-dark);
+    color: var(--text-darker); /* Cambiado a verde más oscuro */
+    font-size: 1.1rem;
 }
 
 .user-details small {
@@ -307,11 +326,12 @@ textarea.form-control {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: var(--gray-light);
 }
 
 .btn-action:hover {
-    background-color: rgba(0,0,0,0.05);
-    color: var(--primary);
+    background-color: var(--primary-light);
+    color: var(--white);
 }
 
 .actions-menu {
@@ -333,7 +353,7 @@ textarea.form-control {
     align-items: center;
     gap: 0.8rem;
     padding: 0.8rem 1.2rem;
-    color: var(--text);
+    color: var(--text-darker); /* Cambiado a verde más oscuro */
     text-decoration: none;
     font-size: 0.95rem;
     transition: var(--transition);
@@ -346,7 +366,7 @@ textarea.form-control {
 
 .actions-menu a:hover, .actions-menu button:hover {
     background: var(--secondary);
-    color: var(--primary-dark);
+    color: var(--primary-darker);
 }
 
 .actions-menu i {
@@ -366,15 +386,17 @@ textarea.form-control {
 .post-content h4 {
     margin-top: 0;
     margin-bottom: 1rem;
-    color: var(--primary-dark);
+    color: var(--text-darker); /* Cambiado a verde más oscuro */
     font-size: 1.4rem;
     font-weight: 600;
+    border-bottom: 2px solid var(--gray);
+    padding-bottom: 0.5rem;
 }
 
 .post-content p {
     margin-bottom: 0;
     line-height: 1.7;
-    color: var(--text);
+    color: var(--text-light);
     font-size: 1.05rem;
 }
 
@@ -387,6 +409,12 @@ textarea.form-control {
     box-shadow: var(--shadow-sm);
     border: 1px dashed var(--primary-light);
     animation: pulse 2s infinite;
+    border-left: 8px solid var(--primary-light);
+}
+
+.login-alert h3 {
+    color: var(--text-darker); /* Cambiado a verde más oscuro */
+    margin-bottom: 1rem;
 }
 
 .login-alert a {
@@ -400,12 +428,13 @@ textarea.form-control {
     padding: 0.5rem 1rem;
     border-radius: var(--radius-sm);
     background-color: var(--secondary);
+    border: 1px solid var(--primary-light);
 }
 
 .login-alert a:hover {
-    color: var(--primary-dark);
-    background-color: rgba(46, 125, 50, 0.1);
-    text-decoration: underline;
+    color: var(--primary-darker);
+    background-color: var(--primary-light);
+    text-decoration: none;
 }
 
 .login-alert a i {
@@ -413,9 +442,9 @@ textarea.form-control {
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.2); }
-    70% { box-shadow: 0 0 0 10px rgba(46, 125, 50, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+    0% { box-shadow: 0 0 0 0 rgba(129, 199, 132, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(129, 199, 132, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(129, 199, 132, 0); }
 }
 
 .fab {
@@ -436,6 +465,7 @@ textarea.form-control {
     font-size: 1.5rem;
     transition: var(--transition);
     z-index: 1000;
+    border: 2px solid var(--white);
 }
 
 .fab:hover {
@@ -483,6 +513,7 @@ textarea.form-control {
     transform: translateY(20px);
     transition: var(--transition);
     box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    border-left: 8px solid var(--primary-light);
 }
 
 .modal-edit.active .modal-content {
@@ -509,7 +540,7 @@ textarea.form-control {
 
 .close-modal:hover {
     color: var(--primary);
-    background-color: rgba(0,0,0,0.05);
+    background-color: var(--gray-light);
 }
 
 .skeleton {
@@ -529,8 +560,8 @@ textarea.form-control {
 }
 
 @keyframes skeleton-loading {
-    0% { background-color: hsl(200, 20%, 80%); }
-    100% { background-color: hsl(200, 20%, 95%); }
+    0% { background-color: var(--gray-light); }
+    100% { background-color: var(--secondary); }
 }
 
 /* Estilos para comentarios */
@@ -544,7 +575,7 @@ textarea.form-control {
     display: flex;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--gray-light);
+    border-bottom: 1px solid var(--gray);
 }
 
 .comment:last-child {
@@ -566,6 +597,8 @@ textarea.form-control {
     margin-right: 1rem;
     flex-shrink: 0;
     box-shadow: var(--shadow-sm);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border: 2px solid var(--white);
 }
 
 .comment-content {
@@ -574,7 +607,7 @@ textarea.form-control {
 
 .comment-author {
     font-weight: 600;
-    color: var(--primary-dark);
+    color: var(--text-darker); /* Cambiado a verde más oscuro */
     font-size: 0.95rem;
     margin-bottom: 0.3rem;
 }
@@ -582,7 +615,7 @@ textarea.form-control {
 .comment-text {
     font-size: 0.95rem;
     line-height: 1.5;
-    color: var(--text);
+    color: var(--text-light);
 }
 
 .comment-time {
@@ -605,11 +638,14 @@ textarea.form-control {
     font-size: 0.95rem;
     outline: none;
     transition: var(--transition);
+    background-color: var(--gray-light);
+    color: var(--text-light);
 }
 
 .add-comment input:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    background-color: var(--white);
 }
 
 .add-comment button {
@@ -622,11 +658,35 @@ textarea.form-control {
     margin-left: 0.8rem;
     cursor: pointer;
     transition: var(--transition);
+    border: 2px solid var(--white);
 }
 
 .add-comment button:hover {
     background: var(--primary-dark);
     transform: scale(1.05);
+}
+
+/* Estilos de dificultad */
+.badge-dificultad {
+    padding: 6px 12px;
+    border-radius: 50px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.badge-dificultad.facil {
+    background-color: #66bb6a;
+}
+
+.badge-dificultad.media {
+    background-color: #ffee58;
+    color: #3e2723;
+}
+
+.badge-dificultad.alta {
+    background-color: #ef5350;
 }
 
 @media (max-width: 768px) {
@@ -687,8 +747,6 @@ textarea.form-control {
     }
 }
     </style>
-</head>
-<body>
     <div class="forum-container">
         <!-- Hero Section -->
         <div class="forum-hero">
@@ -705,21 +763,24 @@ textarea.form-control {
 
         <div class="forum-main">
             <!-- Tarjeta de nueva publicación para usuarios autenticados -->
-            <div>
+            <div sec:authorize="isAuthenticated()">
                 <div class="create-post-card">
                     <div class="card-header">
                         <i class="fas fa-pen-fancy"></i>
                         <h3>CREA UNA NUEVA PUBLICACIÓN</h3>
                     </div>
-                    <form action="#" method="POST">
+                    <form th:action="@{/foro}" th:object="${publicacion}" method="POST">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <div class="form-group">
                             <label>TÍTULO DE TU PUBLICACIÓN</label>
-                            <input type="text" class="form-control" placeholder="Ej: Mis consejos para reducir plástico" required>
+                            <input type="text" th:field="*{titulo}" class="form-control" placeholder="Ej: Mis consejos para reducir plástico" required>
+                            <div th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}" class="text-danger"></div>
                         </div>
                         
                         <div class="form-group">
                             <label>¿QUÉ QUIERES COMPARTIR CON LA COMUNIDAD?</label>
-                            <textarea rows="5" class="form-control" placeholder="Comparte tus ideas, experiencias o preguntas sobre ecología y sostenibilidad..." required></textarea>
+                            <textarea rows="5" th:field="*{contenido}" class="form-control" placeholder="Comparte tus ideas, experiencias o preguntas sobre ecología y sostenibilidad..." required></textarea>
+                            <div th:if="${#fields.hasErrors('contenido')}" th:errors="*{contenido}" class="text-danger"></div>
                         </div>
                         
                         <button type="submit" class="btn-post">
@@ -728,206 +789,52 @@ textarea.form-control {
                     </form>
                 </div>
             </div>
+            
+            <!-- Mensaje para usuarios no autenticados -->
+            <div sec:authorize="!isAuthenticated()" class="login-alert">
+                <h3><i class="fas fa-lock"></i> Únete a la conversación</h3>
+                <p>Para participar en el foro y crear publicaciones, necesitas <a th:href="@{/login}">iniciar sesión</a> o <a th:href="@{/register}">registrarte</a>.</p>
+            </div>
 
             <!-- Lista de publicaciones -->
             <div class="posts-feed">
-                <!-- Publicación 1 -->
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="user-info">
-                            <div class="user-avatar" style="background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);">
-                                <span>M</span>
-                            </div>
-                            <div class="user-details">
-                                <strong>María EcoVida</strong>
-                                <small>Hoy a las 09:15</small>
-                            </div>
-                        </div>
-                        <div class="post-actions">
-                            <button class="btn-action">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div class="actions-menu">
-                                <a href="#" class="edit-post">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <button type="button" class="btn-link">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="post-content">
-                        <h4>Consejos para reducir plástico en el hogar</h4>
-                        <p>Comparto mi experiencia reduciendo plásticos: 1) Usar cepillos de bambú, 2) Bolsas de tela para compras, 3) Recipientes de vidrio. ¿Qué otros tips tienen? Me gustaría aprender más estrategias para reducir nuestro impacto ambiental en el día a día.</p>
-                        
-                        <!-- Comentarios -->
-                        <div class="comments-section">
-                            <div class="comment">
-                                <div class="comment-avatar" style="background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);">
-                                    <span>C</span>
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Carlos Verde</div>
-                                    <p class="comment-text">¡Excelentes consejos María! Yo añadiría usar jabones y shampoos sólidos para evitar envases plásticos. También las esponjas de luffa son una gran alternativa ecológica.</p>
-                                    <div class="comment-time">Hace 2 horas</div>
-                                </div>
-                            </div>
-                            
-                            <div class="comment">
-                                <div class="comment-avatar" style="background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);">
-                                    <span>A</span>
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Ana Recicla</div>
-                                    <p class="comment-text">En mi casa empezamos a comprar a granel y redujimos nuestra basura plástica en un 70%. Llevamos nuestros propios recipientes a la tienda. ¡Vale la pena el esfuerzo!</p>
-                                    <div class="comment-time">Hace 1 hora</div>
-                                </div>
-                            </div>
-                            
-                            <div class="add-comment">
-                                <input type="text" placeholder="Escribe un comentario...">
-                                <button type="button"><i class="fas fa-paper-plane"></i></button>
-                            </div>
-                        </div>
-                    </div>
+                <div th:if="${publicaciones.empty}" class="login-alert">
+                    <h3><i class="fas fa-comments"></i> No hay publicaciones aún</h3>
+                    <p>Sé el primero en compartir algo con la comunidad. ¡Tu experiencia puede inspirar a otros!</p>
                 </div>
                 
-                <!-- Publicación 2 -->
-                <div class="post-card">
+                <div th:each="publicacion : ${publicaciones}" class="post-card">
                     <div class="post-header">
                         <div class="user-info">
-                            <div class="user-avatar" style="background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);">
-                                <span>J</span>
+                            <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                                <span th:text="${publicacion.usuario.nombre.substring(0,1).toUpperCase()}">U</span>
                             </div>
                             <div class="user-details">
-                                <strong>Javier Natur</strong>
-                                <small>Ayer a las 16:45</small>
+                                <strong th:text="${publicacion.usuario.nombre}">Usuario</strong>
+                                <small th:text="${#temporals.format(publicacion.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</small>
                             </div>
                         </div>
-                        <div class="post-actions">
+                        <div class="post-actions" sec:authorize="isAuthenticated()" th:if="${currentUser != null and currentUser.id == publicacion.usuario.id}">
                             <button class="btn-action">
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
                             <div class="actions-menu">
-                                <a href="#" class="edit-post">
+                                <a th:href="@{/foro/edit/{id}(id=${publicacion.id})}" class="edit-post">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <button type="button" class="btn-link">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
+                                <form th:action="@{/foro/delete/{id}(id=${publicacion.id})}" method="post" style="display: inline;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="btn-link" onclick="return confirm('¿Estás seguro de que quieres eliminar esta publicación?')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
                     
                     <div class="post-content">
-                        <h4>Huerto urbano en mi balcón - Mis primeros pasos</h4>
-                        <p>Comienzo mi aventura con un huerto urbano en mi pequeño balcón. Por ahora tengo lechugas, tomates cherry y hierbas aromáticas. ¿Algún consejo para principiantes? Estoy especialmente preocupado por el riego adecuado y el control de plagas de forma natural.</p>
-                        
-                        <!-- Comentarios -->
-                        <div class="comments-section">
-                            <div class="comment">
-                                <div class="comment-avatar" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);">
-                                    <span>L</span>
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Laura Plantas</div>
-                                    <p class="comment-text">¡Bienvenido al mundo de los huertos urbanos! Te recomiendo empezar con plantas más resistentes como rábanos o espinacas. Para plagas, el jabón potásico es muy efectivo y ecológico.</p>
-                                    <div class="comment-time">Ayer a las 18:30</div>
-                                </div>
-                            </div>
-                            
-                            <div class="comment">
-                                <div class="comment-avatar" style="background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);">
-                                    <span>P</span>
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Pablo Semilla</div>
-                                    <p class="comment-text">Para el riego, te sugiero un sistema de autorriego con botellas recicladas. Es sencillo de hacer y mantiene la humedad constante. ¡Mis plantas mejoraron mucho con este método!</p>
-                                    <div class="comment-time">Ayer a las 20:15</div>
-                                </div>
-                            </div>
-                            
-                            <div class="add-comment">
-                                <input type="text" placeholder="Escribe un comentario...">
-                                <button type="button"><i class="fas fa-paper-plane"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Publicación 3 -->
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="user-info">
-                            <div class="user-avatar" style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);">
-                                <span>E</span>
-                            </div>
-                            <div class="user-details">
-                                <strong>Elena Sol</strong>
-                                <small>12/05/2023 a las 10:20</small>
-                            </div>
-                        </div>
-                        <div class="post-actions">
-                            <button class="btn-action">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <div class="actions-menu">
-                                <a href="#" class="edit-post">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <button type="button" class="btn-link">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="post-content">
-                        <h4>Experiencias con paneles solares en casa</h4>
-                        <p>Hace 6 meses instalé paneles solares en mi casa y quería compartir mi experiencia. He reducido mi factura eléctrica en un 60% y la instalación se amortizará en unos 5 años. ¿Alguien más tiene experiencia con energías renovables en el hogar? Me interesaría conocer otras alternativas o consejos para optimizar el uso.</p>
-                        
-                        <!-- Comentarios -->
-                        <div class="comments-section">
-                            <div class="comment">
-                                <div class="comment-avatar" style="background: linear-gradient(135deg, #FFC107 0%, #FFA000 100%);">
-                                    <span>R</span>
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Roberto Energía</div>
-                                    <p class="comment-text">Yo combiné paneles solares con un pequeño aerogenerador. En días nublados el aerogenerador compensa la menor producción solar. La inversión inicial es mayor pero el retorno es más rápido.</p>
-                                    <div class="comment-time">12/05/2023 a las 14:45</div>
-                                </div>
-                            </div>
-                            
-                            <div class="comment">
-                                <div class="comment-avatar" style="background: linear-gradient(135deg, #795548 0%, #5D4037 100%);">
-                                    <span>S</span>
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Sara Limpia</div>
-                                    <p class="comment-text">¿Has considerado añadir un sistema de baterías para almacenar el excedente? Yo lo hice el año pasado y ahora casi no consumo de la red eléctrica convencional.</p>
-                                    <div class="comment-time">13/05/2023 a las 09:30</div>
-                                </div>
-                            </div>
-                            
-                            <div class="comment">
-                                <div class="comment-avatar" style="background: linear-gradient(135deg, #9E9E9E 0%, #616161 100%);">
-                                    <span>D</span>
-                                </div>
-                                <div class="comment-content">
-                                    <div class="comment-author">David Eco</div>
-                                    <p class="comment-text">Importante limpiar los paneles regularmente. Yo noté un 15% más de eficiencia después de una buena limpieza. Uso solo agua y un cepillo suave para no rayar las superficies.</p>
-                                    <div class="comment-time">13/05/2023 a las 11:20</div>
-                                </div>
-                            </div>
-                            
-                            <div class="add-comment">
-                                <input type="text" placeholder="Escribe un comentario...">
-                                <button type="button"><i class="fas fa-paper-plane"></i></button>
-                            </div>
-                        </div>
+                        <h4 th:text="${publicacion.titulo}">Título de la publicación</h4>
+                        <p th:text="${publicacion.contenido}">Contenido de la publicación</p>
                     </div>
                 </div>
             </div>
@@ -979,5 +886,5 @@ textarea.form-control {
             });
         });
     </script>
-</body>
+</div>
 </html>
